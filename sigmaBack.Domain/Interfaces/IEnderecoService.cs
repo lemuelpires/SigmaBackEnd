@@ -1,0 +1,15 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using sigmaBack.Domain.Entities;
+
+namespace SigmaBack.Domain.Interfaces
+{
+    public interface IEnderecoService
+    {
+        Task<IEnumerable<Endereco>> ObterTodosEnderecos();
+        Task<Endereco> ObterEnderecoPorId(int id);
+        Task<int> CriarNovoEndereco(Endereco endereco);
+        Task AtualizarEndereco(Endereco endereco);
+        Task RemoverEndereco(int id);
+    }
+}
