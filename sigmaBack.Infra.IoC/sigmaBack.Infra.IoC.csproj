@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\sigmaBack.API\sigmaBack.Application.csproj" />
+    <ProjectReference Include="..\sigmaBack.API\sigmaBack.API.csproj" />
     <ProjectReference Include="..\sigmaBack.Domain\sigmaBack.Domain.csproj" />
     <ProjectReference Include="..\sigmaback.Infra.Data\sigmaback.Infra.Data.csproj" />
   </ItemGroup>
