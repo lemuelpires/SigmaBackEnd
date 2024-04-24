@@ -1,63 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
+using sigmaBack.Infra.Data.Contexts;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace sigmaBack.Application.Services
 {
     public class CarrinhoCompraService : ICarrinhoCompraService
     {
-        private readonly ICarrinhoCompraRepository _carrinhoRepository;
+        private readonly SigmaDbContext _context;
 
-        public CarrinhoCompraService(ICarrinhoCompraRepository carrinhoRepository)
+        public CarrinhoCompraService(SigmaDbContext context)
         {
-            _carrinhoRepository = carrinhoRepository;
-        }
-
-        public async Task<int> CriarNovoCarrinho(CarrinhoCompra carrinho)
-        {
-            if (carrinho == null)
-            {
-                throw new ArgumentNullException(nameof(carrinho));
-            }
-
-            return await _carrinhoRepository.CriarNovoCarrinho(carrinho);
-        }
-
-        public async Task AtualizarCarrinho(CarrinhoCompra carrinho)
-        {
-            if (carrinho == null)
-            {
-                throw new ArgumentNullException(nameof(carrinho));
-            }
-
-            await _carrinhoRepository.AtualizarCarrinho(carrinho);
+            _context = context;
         }
 
         public async Task<IEnumerable<CarrinhoCompra>> ObterTodosCarrinhos()
         {
-            return await _carrinhoRepository.ObterTodosCarrinhos();
+            return await _context.CarrinhosCompras.ToListAsync();
         }
 
         public async Task<CarrinhoCompra> ObterCarrinhoPorId(int id)
         {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id), "ID do carrinho deve ser maior que zero.");
-            }
+            return await _context.CarrinhosCompras.FindAsync(id);
+        }
 
-            return await _carrinhoRepository.ObterCarrinhoPorId(id);
+        public async Task<int> CriarNovoCarrinho(CarrinhoCompra carrinho)
+        {
+            _context.CarrinhosCompras.Add(carrinho);
+            await _context.SaveChangesAsync();
+            return carrinho.IDCarrinho;
+        }
+
+        public async Task AtualizarCarrinho(CarrinhoCompra carrinho)
+        {
+            _context.Entry(carrinho).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
         public async Task RemoverCarrinho(int id)
         {
-            if (id <= 0)
+            var carrinho = await _context.CarrinhosCompras.FindAsync(id);
+            if (carrinho == null)
             {
-                throw new ArgumentOutOfRangeException(nameof(id), "ID do carrinho deve ser maior que zero.");
+                throw new ArgumentException("Carrinho não encontrado.");
             }
 
-            await _carrinhoRepository.RemoverCarrinho(id);
+            _context.CarrinhosCompras.Remove(carrinho);
+            await _context.SaveChangesAsync();
         }
     }
 }
