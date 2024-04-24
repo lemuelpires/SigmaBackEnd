@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +22,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todas as categorias.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todas as categorias.", typeof(IEnumerable<Categoria>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterTodasCategorias()
         {
             try
@@ -34,6 +39,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém uma categoria por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Categoria encontrada.", typeof(Categoria))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Categoria não encontrada.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterCategoriaPorId(int id)
         {
             try
@@ -51,7 +60,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarNovaCategoria(Categoria categoria)
+        [SwaggerOperation(Summary = "Cria uma nova categoria.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Categoria criada com sucesso.", typeof(Categoria))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> CriarNovaCategoria([FromBody] Categoria categoria)
         {
             try
             {
@@ -65,7 +77,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarCategoria(int id, Categoria categoria)
+        [SwaggerOperation(Summary = "Atualiza uma categoria existente.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria atualizada com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AtualizarCategoria(int id, [FromBody] Categoria categoria)
         {
             try
             {
@@ -79,6 +94,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove uma categoria existente.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria removida com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> RemoverCategoria(int id)
         {
             try

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
-using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +21,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todos os pedidos.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os pedidos.", typeof(IEnumerable<Pedido>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterTodosPedidos()
         {
             try
@@ -34,6 +38,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém um pedido por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Pedido encontrado.", typeof(Pedido))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Pedido não encontrado.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterPedidoPorId(int id)
         {
             try
@@ -51,7 +59,11 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarPedido(Pedido pedido)
+        [SwaggerOperation(Summary = "Cria um novo pedido.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Pedido criado com sucesso.", typeof(Pedido))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> CriarPedido([FromBody] Pedido pedido)
         {
             try
             {
@@ -63,9 +75,12 @@ namespace sigmaBack.API.Controllers
                 return StatusCode(500, $"Erro ao criar pedido: {ex.Message}");
             }
         }
-       
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarPedido(int id, Pedido pedido)
+        [SwaggerOperation(Summary = "Atualiza um pedido.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido atualizado com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AtualizarPedido(int id, [FromBody] Pedido pedido)
         {
             try
             {
@@ -78,8 +93,10 @@ namespace sigmaBack.API.Controllers
             }
         }
 
-
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove um pedido.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido removido com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> RemoverPedido(int id)
         {
             try
@@ -94,4 +111,3 @@ namespace sigmaBack.API.Controllers
         }
     }
 }
-

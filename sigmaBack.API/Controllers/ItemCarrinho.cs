@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +22,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todos os itens do carrinho.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os itens do carrinho.", typeof(IEnumerable<ItemCarrinho>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterTodosItensCarrinho()
         {
             try
@@ -34,6 +39,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém um item do carrinho por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Item do carrinho encontrado.", typeof(ItemCarrinho))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Item do carrinho não encontrado.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterItemCarrinhoPorId(int id)
         {
             try
@@ -51,7 +60,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AdicionarItemCarrinho(ItemCarrinho itemCarrinho)
+        [SwaggerOperation(Summary = "Adiciona um novo item ao carrinho.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Item do carrinho adicionado com sucesso.", typeof(ItemCarrinho))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AdicionarItemCarrinho([FromBody] ItemCarrinho itemCarrinho)
         {
             try
             {
@@ -65,7 +77,11 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ItemCarrinho itemCarrinho)
+        [SwaggerOperation(Summary = "Atualiza um item do carrinho.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Item do carrinho atualizado com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "O ID do item do carrinho não corresponde ao ID na URL.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AtualizarItemCarrinho(int id, [FromBody] ItemCarrinho itemCarrinho)
         {
             if (id != itemCarrinho.IDItemCarrinho)
             {
@@ -79,12 +95,14 @@ namespace sigmaBack.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, $"Erro ao atualizar item do carrinho: {ex.Message}");
             }
         }
 
-
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove um item do carrinho.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Item do carrinho removido com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> RemoverItemCarrinho(int id)
         {
             try

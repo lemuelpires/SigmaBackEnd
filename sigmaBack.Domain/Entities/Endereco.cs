@@ -5,13 +5,13 @@ namespace sigmaBack.Domain.Entities
 {
     public class Endereco
     {
-        public int IDEndereco { get; private set; }
-        public int IDUsuario { get; private set; }
-        public string Rua { get; private set; }
-        public string Cidade { get; private set; }
-        public string Estado { get; private set; }
-        public string CEP { get; private set; }
-        public string Pais { get; private set; }
+        public int IDEndereco { get; set; }
+        public int IDUsuario { get; set; }
+        public string Rua { get; set; }
+        public string Cidade { get; set; }
+        public string Estado { get; set; }
+        public string CEP { get; set; }
+        public string Pais { get; set; }
 
         public Endereco() { } // Construtor vazio protegido para o Entity Framework Core
 

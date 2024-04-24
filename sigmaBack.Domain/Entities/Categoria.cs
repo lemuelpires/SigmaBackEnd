@@ -11,7 +11,7 @@ namespace sigmaBack.Domain.Entities
         public string NomeCategoria
         {
             get { return _nomeCategoria; }
-            private set
+             set
             {
                 if (string.IsNullOrEmpty(value))
                 {

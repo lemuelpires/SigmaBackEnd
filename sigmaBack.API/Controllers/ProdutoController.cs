@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +21,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todos os produtos.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os produtos.", typeof(IEnumerable<Produto>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterTodosProdutos()
         {
             try
@@ -33,6 +38,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém um produto por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Produto encontrado.", typeof(Produto))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Produto não encontrado.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterProdutoPorId(int id)
         {
             try
@@ -50,7 +59,11 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarProduto(Produto produto)
+        [SwaggerOperation(Summary = "Cria um novo produto.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Produto criado com sucesso.", typeof(Produto))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> CriarProduto([FromBody] Produto produto)
         {
             try
             {
@@ -64,7 +77,11 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarProduto(int id, Produto produto)
+        [SwaggerOperation(Summary = "Atualiza um produto.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Produto atualizado com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AtualizarProduto(int id, [FromBody] Produto produto)
         {
             try
             {
@@ -81,6 +98,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove um produto.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Produto removido com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> RemoverProduto(int id)
         {
             try

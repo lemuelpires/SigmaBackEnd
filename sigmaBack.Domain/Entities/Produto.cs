@@ -11,14 +11,14 @@ namespace sigmaBack.Domain.Entities
     {
         public int IDProduto { get; set; }
 
-        public string NomeProduto { get; private set; }
-        public string DescricaoProduto { get; private set; }
-        public decimal Preco { get; private set; }
-        public int QuantidadeEstoque { get; private set; }
-        public string Categoria { get; private set; }
-        public string Marca { get; private set; }
-        public string ImagemProduto { get; private set; }
-        public string FichaTecnica { get; private set; }
+        public string NomeProduto { get; set; }
+        public string DescricaoProduto { get; set; }
+        public decimal Preco { get; set; }
+        public int QuantidadeEstoque { get; set; }
+        public string Categoria { get; set; }
+        public string Marca { get; set; }
+        public string ImagemProduto { get; set; }
+        public string FichaTecnica { get; set; }
 
         public ICollection<ItemPedido> ItensPedido { get; set; }
         public ICollection<ItemCarrinho> ItensCarrinho { get; set; }

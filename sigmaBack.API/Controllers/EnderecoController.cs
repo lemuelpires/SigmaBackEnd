@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,6 +22,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todos os endereços.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os endereços.", typeof(IEnumerable<Endereco>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterTodosEnderecos()
         {
             try
@@ -34,6 +39,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém um endereço por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Endereço encontrado.", typeof(Endereco))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Endereço não encontrado.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterEnderecoPorId(int id)
         {
             try
@@ -51,7 +60,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarNovoEndereco(Endereco endereco)
+        [SwaggerOperation(Summary = "Cria um novo endereço.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Endereço criado com sucesso.", typeof(Endereco))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> CriarNovoEndereco([FromBody] Endereco endereco)
         {
             try
             {
@@ -65,7 +77,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarEndereco(int id, Endereco endereco)
+        [SwaggerOperation(Summary = "Atualiza um endereço existente.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Endereço atualizado com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AtualizarEndereco(int id, [FromBody] Endereco endereco)
         {
             try
             {
@@ -79,6 +94,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove um endereço existente.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Endereço removido com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> RemoverEndereco(int id)
         {
             try

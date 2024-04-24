@@ -4,13 +4,13 @@ namespace sigmaBack.Domain.Entities
 {
     public class ItemPedido
     {
-        public int IDItemPedido { get; private set; }
-        public int IDPedido { get; private set; }
-        public int IDProduto { get; private set; }
-        public int Quantidade { get; private set; }
-        public decimal PrecoUnitario { get; private set; }
-        public string URLImagem { get; private set; }
-        public string DescricaoProduto { get; private set; }
+        public int IDItemPedido { get; set; }
+        public int IDPedido { get; set; }
+        public int IDProduto { get; set; }
+        public int Quantidade { get; set; }
+        public decimal PrecoUnitario { get; set; }
+        public string URLImagem { get; set; }
+        public string DescricaoProduto { get; set; }
 
         public ItemPedido() { } // Construtor vazio protegido para o Entity Framework Core
 

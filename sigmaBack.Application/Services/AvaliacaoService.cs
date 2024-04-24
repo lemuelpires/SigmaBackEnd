@@ -1,5 +1,7 @@
-﻿using sigmaBack.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
+using sigmaBack.Infra.Data.Contexts;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,57 +10,46 @@ namespace sigmaBack.Application.Services
 {
     public class AvaliacaoService : IAvaliacaoService
     {
-        private readonly List<Avaliacao> _avaliacoes; // Lista simulando o armazenamento das avaliações
+        private readonly SigmaDbContext _context;
 
-        public AvaliacaoService()
+        public AvaliacaoService(SigmaDbContext context)
         {
-            _avaliacoes = new List<Avaliacao>();
+            _context = context;
         }
 
-        public Task<IEnumerable<Avaliacao>> GetAllAvaliacoesAsync()
+        public async Task<IEnumerable<Avaliacao>> GetAllAvaliacoesAsync()
         {
-            return Task.FromResult<IEnumerable<Avaliacao>>(_avaliacoes);
+            return await _context.Avaliacoes.ToListAsync();
         }
 
-        public Task<Avaliacao> GetAvaliacaoByIdAsync(int id)
+        public async Task<Avaliacao> GetAvaliacaoByIdAsync(int id)
         {
-            var avaliacao = _avaliacoes.Find(a => a.IDAvaliacao == id);
-            return Task.FromResult(avaliacao);
+            return await _context.Avaliacoes.FindAsync(id);
         }
 
-        public Task<Avaliacao> CreateAvaliacaoAsync(Avaliacao avaliacao)
+        public async Task<Avaliacao> CreateAvaliacaoAsync(Avaliacao avaliacao)
         {
-            avaliacao.IDAvaliacao = _avaliacoes.Count + 1; // Atribui um ID sequencial
-            _avaliacoes.Add(avaliacao);
-            return Task.FromResult(avaliacao);
+            _context.Avaliacoes.Add(avaliacao);
+            await _context.SaveChangesAsync();
+            return avaliacao;
         }
 
-        public Task UpdateAvaliacaoAsync(Avaliacao avaliacao)
+        public async Task UpdateAvaliacaoAsync(Avaliacao avaliacao)
         {
-            var index = _avaliacoes.FindIndex(a => a.IDAvaliacao == avaliacao.IDAvaliacao);
-            if (index != -1)
-            {
-                _avaliacoes[index] = avaliacao;
-            }
-            else
-            {
-                throw new ArgumentException("Avaliação não encontrada.");
-            }
-            return Task.CompletedTask;
+            _context.Entry(avaliacao).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
-        public Task DeleteAvaliacaoAsync(int id)
+        public async Task DeleteAvaliacaoAsync(int id)
         {
-            var index = _avaliacoes.FindIndex(a => a.IDAvaliacao == id);
-            if (index != -1)
-            {
-                _avaliacoes.RemoveAt(index);
-            }
-            else
+            var avaliacao = await _context.Avaliacoes.FindAsync(id);
+            if (avaliacao == null)
             {
                 throw new ArgumentException("Avaliação não encontrada.");
             }
-            return Task.CompletedTask;
+
+            _context.Avaliacoes.Remove(avaliacao);
+            await _context.SaveChangesAsync();
         }
     }
 }

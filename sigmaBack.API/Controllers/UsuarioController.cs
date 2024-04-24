@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +21,9 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todos os usuários.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os usuários.", typeof(IEnumerable<Usuario>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterTodosUsuarios()
         {
             try
@@ -33,6 +38,10 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém um usuário por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Usuário encontrado.", typeof(Usuario))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Usuário não encontrado.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> ObterUsuarioPorId(int id)
         {
             try
@@ -50,7 +59,11 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CriarUsuario(Usuario usuario)
+        [SwaggerOperation(Summary = "Cria um novo usuário.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Usuário criado com sucesso.", typeof(Usuario))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> CriarUsuario([FromBody] Usuario usuario)
         {
             try
             {
@@ -64,7 +77,11 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizarUsuario(int id, Usuario usuario)
+        [SwaggerOperation(Summary = "Atualiza um usuário.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Usuário atualizado com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> AtualizarUsuario(int id, [FromBody] Usuario usuario)
         {
             try
             {
@@ -78,8 +95,10 @@ namespace sigmaBack.API.Controllers
             }
         }
 
-
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove um usuário.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Usuário removido com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> RemoverUsuario(int id)
         {
             try
@@ -94,4 +113,3 @@ namespace sigmaBack.API.Controllers
         }
     }
 }
-

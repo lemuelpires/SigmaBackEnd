@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using sigmaBack.Domain.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
+using sigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations; // Adicionando namespace necessário
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,7 +21,10 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpGet]
-
+        [SwaggerOperation(Summary = "Obtém a lista da previsão de tempo")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de avaliações", typeof(IEnumerable<Avaliacao>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor")]
         public async Task<ActionResult<IEnumerable<Avaliacao>>> Get()
         {
             var avaliacoes = await _avaliacaoService.GetAllAvaliacoesAsync();
@@ -28,6 +32,9 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém uma avaliação por ID")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a avaliação encontrada", typeof(Avaliacao))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Avaliação não encontrada")]
         public async Task<ActionResult<Avaliacao>> GetById(int id)
         {
             var avaliacao = await _avaliacaoService.GetAvaliacaoByIdAsync(id);
@@ -39,6 +46,9 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Cria uma nova avaliação")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Avaliação criada com sucesso", typeof(Avaliacao))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
         public async Task<ActionResult<Avaliacao>> Post(Avaliacao avaliacao)
         {
             try
@@ -53,6 +63,10 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Atualiza uma avaliação existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Avaliação atualizada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Avaliação não encontrada")]
         public async Task<IActionResult> Put(int id, Avaliacao avaliacao)
         {
             if (id != avaliacao.IDAvaliacao)
@@ -72,6 +86,9 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Exclui uma avaliação existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Avaliação excluída com sucesso")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Avaliação não encontrada")]
         public async Task<IActionResult> Delete(int id)
         {
             try

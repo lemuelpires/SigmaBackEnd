@@ -5,9 +5,9 @@ namespace sigmaBack.Domain.Entities
 {
     public class CarrinhoCompra
     {
-        public int IDCarrinho { get; private set; }
-        public int IDUsuario { get; private set; }
-        public DateTime DataHoraCriacaoCarrinho { get; private set; }
+        public int IDCarrinho { get; set; }
+        public int IDUsuario { get; set; }
+        public DateTime DataHoraCriacaoCarrinho { get; set; }
         public Usuario Usuario { get; set; }
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
 

@@ -6,11 +6,11 @@ namespace sigmaBack.Domain.Entities
     public class Avaliacao
     {
         public int IDAvaliacao { get; set; }
-        public int IDProduto { get; private set; }
-        public int IDUsuario { get; private set; }
-        public string Comentario { get; private set; }
-        public int Classificacao { get; private set; }
-        public DateTime DataAvaliacao { get; private set; }
+        public int IDProduto { get; set; }
+        public int IDUsuario { get; set; }
+        public string Comentario { get; set; }
+        public int Classificacao { get; set; }
+        public DateTime DataAvaliacao { get; set; }
 
         // Adicione um construtor vazio protegido para o Entity Framework Core
         public Avaliacao() { }
@@ -25,7 +25,6 @@ namespace sigmaBack.Domain.Entities
         {
             IDAvaliacao = idAvaliacao;
         }
-
 
         private void ValidationDomain(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao)
         {

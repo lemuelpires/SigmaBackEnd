@@ -1,3 +1,4 @@
+using FluentAssertions.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ namespace sigmaBack.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SigmaBack v1");
             });
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

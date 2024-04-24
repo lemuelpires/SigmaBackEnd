@@ -4,13 +4,13 @@ namespace sigmaBack.Domain.Entities
 {
     public class ItemCarrinho
     {
-        public int IDItemCarrinho { get; private set; }
-        public int IDCarrinho { get; private set; }
-        public int IDProduto { get; private set; }
-        public int Quantidade { get; private set; }
-        public decimal PrecoUnitario { get; private set; }
-        public string URLImagem { get; private set; }
-        public string DescricaoProduto { get; private set; }
+        public int IDItemCarrinho { get; set; }
+        public int IDCarrinho { get; set; }
+        public int IDProduto { get; set; }
+        public int Quantidade { get; set; }
+        public decimal PrecoUnitario { get; set; }
+        public string URLImagem { get; set; }
+        public string DescricaoProduto { get; set; }
 
         public ItemCarrinho() { } // Construtor vazio protegido para o Entity Framework Core
 

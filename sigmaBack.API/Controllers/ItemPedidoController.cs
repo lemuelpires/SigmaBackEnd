@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +21,9 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtém todos os itens do pedido.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os itens do pedido.", typeof(IEnumerable<ItemPedido>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<ActionResult<IEnumerable<ItemPedido>>> Get()
         {
             var itensPedido = await _itemPedidoService.ObterTodosItensPedido();
@@ -26,6 +31,10 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtém um item do pedido por ID.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Item do pedido encontrado.", typeof(ItemPedido))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Item do pedido não encontrado.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<ActionResult<ItemPedido>> GetById(int id)
         {
             var itemPedido = await _itemPedidoService.ObterItemPedidoPorId(id);
@@ -37,7 +46,11 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ItemPedido>> Post(ItemPedido itemPedido)
+        [SwaggerOperation(Summary = "Cria um novo item do pedido.")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Item do pedido criado com sucesso.", typeof(ItemPedido))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<ActionResult<ItemPedido>> Post([FromBody] ItemPedido itemPedido)
         {
             try
             {
@@ -51,7 +64,11 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ItemPedido itemPedido)
+        [SwaggerOperation(Summary = "Atualiza um item do pedido.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Item do pedido atualizado com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "O ID do item do pedido não corresponde ao ID na URL.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
+        public async Task<IActionResult> Put(int id, [FromBody] ItemPedido itemPedido)
         {
             if (id != itemPedido.IDItemPedido)
             {
@@ -70,6 +87,10 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Remove um item do pedido.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Item do pedido removido com sucesso.")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
         public async Task<IActionResult> Delete(int id)
         {
             try
