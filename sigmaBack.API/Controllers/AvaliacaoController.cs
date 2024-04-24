@@ -20,6 +20,7 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<Avaliacao>>> Get()
         {
             var avaliacoes = await _avaliacaoService.GetAllAvaliacoesAsync();

@@ -1,6 +1,17 @@
-using sigmaBack.Infra.Data.Contexts;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using sigmaBack.Application.Services;
+using sigmaBack.Domain.Interfaces;
+using sigmaBack.Infra.Data.Repositories;
+using SigmaBack.Application.Services;
+using SigmaBack.Domain.Interfaces;
+using SigmaBack.Infra.Data.Repositories;
+using SigmaBack.Infrastructure.Repositories;
 
 namespace sigmaBack.API
 {
@@ -9,36 +20,20 @@ namespace sigmaBack.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
-
-            builder.Services.AddDbContext<SigmaDbContext>(options =>
-               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "sigmaBack", Version = "v1" });
-            });
-
+            ConfigureServices(builder.Services);
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-            // Middleware para o Swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SigmaBack v1");
-                // Caso você queira acessar o Swagger na raiz do seu projeto, utilize o código abaixo:
-                // c.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();
@@ -53,6 +48,52 @@ namespace sigmaBack.API
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllersWithViews();
+
+            // Registro do contexto do banco de dados
+            services.AddDbContext<sigmaBack.Infra.Data.Contexts.SigmaDbContext>(options =>
+               options.UseSqlServer(GetConnectionString()));
+
+            // Registro do serviço AvaliacaoService
+            services.AddScoped<IAvaliacaoService, AvaliacaoService>();
+            services.AddScoped<ICarrinhoCompraService, CarrinhoCompraService>();
+            services.AddScoped<ICarrinhoCompraRepository, CarrinhoCompraRepository>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IProdutoRepository,ProdutoRepository>();
+            services.AddScoped<IProdutoService,ProdutoService>();
+            services.AddScoped<IPedidoService, PedidoService>();
+            services.AddScoped<IPedidoRepository, PedidoRepository>();
+            services.AddScoped<IItemPedidoService, ItemPedidoService>();
+            services.AddScoped<IItemPedidoRepository, ItemPedidoRepository>();
+            services.AddScoped<IItemCarrinhoService, ItemCarrinhoService>();
+            services.AddScoped<IItemCarrinhoRepository, ItemCarrinhoRepository>();
+            services.AddScoped<IEnderecoService, EnderecoService>();
+            services.AddScoped<IEnderecoRepository, EnderecoRepository>();
+            services.AddScoped<ICategoriaService, CategoriaService>();
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();    
+
+
+
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "sigmaBack", Version = "v1" });
+            });
+        }
+
+        private static string GetConnectionString()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            return config.GetConnectionString("DefaultConnection");
         }
     }
 }
