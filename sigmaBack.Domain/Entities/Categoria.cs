@@ -28,6 +28,10 @@ namespace sigmaBack.Domain.Entities
             NomeCategoria = nomeCategoria;
         }
 
+        public Categoria()
+        {        
+        }
+
         public Categoria(int idCategoria, string nomeCategoria)
         {
             IDCategoria = idCategoria;

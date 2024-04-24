@@ -13,8 +13,9 @@ namespace sigmaBack.Domain.Entities
         public string MetodoPagamento { get; private set; }
         public string EnderecoEntrega { get; private set; }
         public string DetalhesEnvio { get; private set; }
+        public ICollection<ItemPedido> ItensPedidos { get; set; }
 
-        protected Pedido() { } // Construtor vazio protegido para o Entity Framework Core
+        public Pedido() { } // Construtor vazio protegido para o Entity Framework Core
 
         public Pedido(int idUsuario, DateTime dataPedido, string statusPedido, decimal totalPedido, string metodoPagamento, string enderecoEntrega, string detalhesEnvio)
         {

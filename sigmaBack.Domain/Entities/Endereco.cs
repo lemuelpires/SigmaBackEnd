@@ -13,7 +13,7 @@ namespace sigmaBack.Domain.Entities
         public string CEP { get; private set; }
         public string Pais { get; private set; }
 
-        protected Endereco() { } // Construtor vazio protegido para o Entity Framework Core
+        public Endereco() { } // Construtor vazio protegido para o Entity Framework Core
 
         public Endereco(int idUsuario, string rua, string cidade, string estado, string cep, string pais)
         {

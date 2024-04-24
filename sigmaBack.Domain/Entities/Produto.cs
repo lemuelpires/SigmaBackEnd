@@ -24,6 +24,10 @@ namespace sigmaBack.Domain.Entities
         public ICollection<ItemCarrinho> ItensCarrinho { get; set; }
         public ICollection<Avaliacao> Avaliacoes { get; set; }
 
+        public Produto()
+        {
+        }
+
         public Produto(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica)
         {
             ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);

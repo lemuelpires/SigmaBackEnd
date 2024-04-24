@@ -12,7 +12,7 @@ namespace sigmaBack.Domain.Entities
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
 
         // Adicione um construtor vazio protegido para o Entity Framework Core
-        protected CarrinhoCompra() { }
+        public CarrinhoCompra() { }
 
         public CarrinhoCompra(int idUsuario, DateTime dataHoraCriacaoCarrinho)
         {

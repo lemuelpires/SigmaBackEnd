@@ -10,7 +10,6 @@ namespace sigmaBack.Domain.Entities
     public class Usuario
     {
         public int IDUsuario { get; set; }
-
         public string Email { get; private set; }
         public string Nome { get; private set; }
         public string Sobrenome { get; private set; }
@@ -24,6 +23,9 @@ namespace sigmaBack.Domain.Entities
         public ICollection<Avaliacao> Avaliacoes { get; set; }
         public ICollection<Endereco> Enderecos { get; set; }
 
+        public Usuario()
+        {
+        }
         public Usuario(string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone)
         {
             ValidationDomain(email, nome, sobrenome, senha, genero, dataNascimento, telefone);

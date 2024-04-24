@@ -1,10 +1,11 @@
 ﻿using sigmaBack.Domain.Validation;
+using System;
 
 namespace sigmaBack.Domain.Entities
 {
     public class Avaliacao
     {
-        public int IDAvaliacao { get; private set; }
+        public int IDAvaliacao { get; set; }
         public int IDProduto { get; private set; }
         public int IDUsuario { get; private set; }
         public string Comentario { get; private set; }
@@ -12,7 +13,7 @@ namespace sigmaBack.Domain.Entities
         public DateTime DataAvaliacao { get; private set; }
 
         // Adicione um construtor vazio protegido para o Entity Framework Core
-        protected Avaliacao() { }
+        public Avaliacao() { }
 
         public Avaliacao(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao)
         {
@@ -24,6 +25,7 @@ namespace sigmaBack.Domain.Entities
         {
             IDAvaliacao = idAvaliacao;
         }
+
 
         private void ValidationDomain(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao)
         {

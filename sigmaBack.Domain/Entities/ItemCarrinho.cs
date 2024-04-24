@@ -12,7 +12,7 @@ namespace sigmaBack.Domain.Entities
         public string URLImagem { get; private set; }
         public string DescricaoProduto { get; private set; }
 
-        protected ItemCarrinho() { } // Construtor vazio protegido para o Entity Framework Core
+        public ItemCarrinho() { } // Construtor vazio protegido para o Entity Framework Core
 
         public ItemCarrinho(int idCarrinho, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto)
         {
