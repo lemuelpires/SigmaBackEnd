@@ -44,4 +44,4 @@ namespace sigmaBack.Domain.Test
         // Adicione mais testes para outros cenários, como senha em branco, email inválido, etc.
     }
 }
-
+//

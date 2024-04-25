@@ -42,4 +42,4 @@ namespace sigmaBack.Domain.Test
         // Adicione mais testes para outros cenários, como quantidade negativa, etc.
     }
 }
-
+//

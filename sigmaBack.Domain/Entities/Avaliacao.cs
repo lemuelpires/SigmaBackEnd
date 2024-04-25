@@ -8,7 +8,7 @@ namespace sigmaBack.Domain.Entities
         public int IDAvaliacao { get; set; }
         public int IDProduto { get; set; }
         public int IDUsuario { get; set; }
-        public string Comentario { get; set; }
+        public string? Comentario { get; set; }
         public int Classificacao { get; set; }
         public DateTime DataAvaliacao { get; set; }
 

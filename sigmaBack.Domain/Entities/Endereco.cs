@@ -7,11 +7,11 @@ namespace sigmaBack.Domain.Entities
     {
         public int IDEndereco { get; set; }
         public int IDUsuario { get; set; }
-        public string Rua { get; set; }
-        public string Cidade { get; set; }
-        public string Estado { get; set; }
-        public string CEP { get; set; }
-        public string Pais { get; set; }
+        public string? Rua { get; set; }
+        public string? Cidade { get; set; }
+        public string? Estado { get; set; }
+        public string? CEP { get; set; }
+        public string? Pais { get; set; }
 
         public Endereco() { } // Construtor vazio protegido para o Entity Framework Core
 

@@ -10,3 +10,4 @@ namespace sigmaBack.Application.AutoMapper
     {
     }
 }
+//

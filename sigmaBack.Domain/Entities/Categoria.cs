@@ -7,8 +7,8 @@ namespace sigmaBack.Domain.Entities
     {
         public int IDCategoria { get; set; }
 
-        private string _nomeCategoria;
-        public string NomeCategoria
+        private string? _nomeCategoria;
+        public string? NomeCategoria
         {
             get { return _nomeCategoria; }
              set

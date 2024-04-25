@@ -8,7 +8,7 @@ namespace sigmaBack.Domain.Entities
         public int IDCarrinho { get; set; }
         public int IDUsuario { get; set; }
         public DateTime DataHoraCriacaoCarrinho { get; set; }
-        public Usuario Usuario { get; set; }
+        public Usuario? Usuario { get; set; }
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
 
         // Adicione um construtor vazio protegido para o Entity Framework Core

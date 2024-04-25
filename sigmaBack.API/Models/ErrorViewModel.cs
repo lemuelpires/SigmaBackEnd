@@ -7,3 +7,4 @@ namespace sigmaBack.API.Models
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }
+//

@@ -9,8 +9,8 @@ namespace sigmaBack.Domain.Entities
         public int IDProduto { get; set; }
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
-        public string URLImagem { get; set; }
-        public string DescricaoProduto { get; set; }
+        public string? URLImagem { get; set; }
+        public string? DescricaoProduto { get; set; }
 
         public ItemCarrinho() { } // Construtor vazio protegido para o Entity Framework Core
 
