@@ -94,7 +94,9 @@ namespace sigmaBack.API
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            return config.GetConnectionString("DefaultConnection");
+            // Obtenha a conexão padrão ou forneça uma string padrão se a chave não for encontrada
+            return config.GetConnectionString("DefaultConnection") ?? "DefaultConnectionString";
         }
+
     }
 }

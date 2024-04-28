@@ -72,11 +72,21 @@ namespace SigmaBack.Application.Services
 
         public async Task AplicarDescontoPromocional(int idProduto, decimal percentualDesconto)
         {
+            await Task.Run(() =>
+            {
+
+
+            });
             // Lógica para aplicar desconto promocional
         }
 
         public async Task VerificarDisponibilidadeEstoque(int idProduto, int quantidadeDesejada)
         {
+            await Task.Run(() =>
+            {
+
+
+            });
             // Lógica para verificar disponibilidade em estoque
         }
     }

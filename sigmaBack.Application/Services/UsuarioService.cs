@@ -46,31 +46,55 @@ namespace SigmaBack.Application.Services
 
         public async Task<bool> AutenticarUsuario(string email, string senha)
         {
+            await Task.Run(() =>
+            {
+               
+
+            });
             // Implemente a autenticação do usuário aqui
             return false; // Altere isso conforme a lógica de autenticação real
         }
 
         public async Task<bool> AlterarSenha(int idUsuario, string senhaAntiga, string novaSenha)
         {
+            await Task.Run(() =>
+            {
+                
+
+            });
             // Implemente a lógica de alteração de senha aqui
             return false; // Altere isso conforme a lógica real
         }
 
         public async Task<IEnumerable<Endereco>> ObterEnderecosUsuario(int idUsuario)
         {
-            // Implemente a obtenção de endereços do usuário aqui
+            await Task.Run(() =>
+            {
+                // Implemente a obtenção de endereços do usuário aqui
+                
+            });
             return new List<Endereco>(); // Altere isso conforme a lógica real
+           
         }
 
         public async Task AdicionarEnderecoUsuario(int idUsuario, Endereco endereco)
         {
+            await Task.Run(() =>
+            {
             // Implemente a adição de endereço do usuário aqui
+            });
+            
         }
 
         public async Task RemoverEnderecoUsuario(int idEndereco)
         {
-            // Implemente a remoção de endereço do usuário aqui
+            await Task.Run(() =>
+            {
+                // Implemente a remoção de endereço do usuário aqui
+            });
         }
+
+
     }
 }
 //

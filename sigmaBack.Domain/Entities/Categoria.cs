@@ -38,7 +38,7 @@ namespace sigmaBack.Domain.Entities
             NomeCategoria = nomeCategoria;
         }
 
-        public void Update(string novoNomeCategoria)
+        public void Update(string? novoNomeCategoria)
         {
             DomainExceptionValidation.When(string.IsNullOrEmpty(novoNomeCategoria), "O novo nome da categoria é obrigatório.");
             NomeCategoria = novoNomeCategoria;

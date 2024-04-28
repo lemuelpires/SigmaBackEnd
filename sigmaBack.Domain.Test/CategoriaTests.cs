@@ -39,7 +39,8 @@ namespace sigmaBack.Tests
         {
             // Arrange
             string nomeCategoria = "Eletrônicos";
-            string novoNomeCategoria = null;
+            string? novoNomeCategoria = null; // Declarado como anulável
+
             var categoria = new Categoria(nomeCategoria);
 
             // Act & Assert
@@ -47,4 +48,3 @@ namespace sigmaBack.Tests
         }
     }
 }
-//
