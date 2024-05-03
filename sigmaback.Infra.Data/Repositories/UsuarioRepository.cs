@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using sigmaBack.Infra.Data.Contexts;
 
 namespace SigmaBack.Infrastructure.Repositories
@@ -39,20 +39,29 @@ namespace SigmaBack.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoverUsuario(int id)
-        {
-            var usuario = await _dbContext.Usuarios.FindAsync(id);
-            if (usuario != null)
-            {
-                _dbContext.Usuarios.Remove(usuario);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
-
         public async Task<bool> VerificarExistenciaEmail(string email)
         {
             return await _dbContext.Usuarios.AnyAsync(u => u.Email == email);
         }
+
+        public async Task DesabilitarUsuario(int id)
+        {
+            var usuario = await _dbContext.Usuarios.FindAsync(id);
+            if (usuario != null)
+            {
+                usuario.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task HabilitarUsuario(int id)
+        {
+            var usuario = await _dbContext.Usuarios.FindAsync(id);
+            if (usuario != null)
+            {
+                usuario.Ativo = true;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }
-//

@@ -59,15 +59,25 @@ namespace sigmaBack.Infra.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoverProduto(int id)
+
+        public async Task DesabilitarProduto(int id)
         {
             var produto = await _dbContext.Produtos.FindAsync(id);
             if (produto != null)
             {
-                _dbContext.Produtos.Remove(produto);
+                produto.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task HabilitarProduto(int id)
+        {
+            var produto = await _dbContext.Produtos.FindAsync(id);
+            if (produto != null)
+            {
+                produto.Ativo = true;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//

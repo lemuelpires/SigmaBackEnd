@@ -40,15 +40,23 @@ namespace sigmaBack.Infra.Data.Repositories
             return await _dbContext.CarrinhosCompras.FindAsync(id);
         }
 
-        public async Task RemoverCarrinho(int id)
+        public async Task HabilitarCarrinho(int id)
         {
             var carrinho = await _dbContext.CarrinhosCompras.FindAsync(id);
             if (carrinho != null)
             {
-                _dbContext.CarrinhosCompras.Remove(carrinho);
+                carrinho.Ativo = true;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task DesabilitarCarrinho(int id)
+        {
+            var carrinho = await _dbContext.CarrinhosCompras.FindAsync(id);
+            if (carrinho != null)
+            {
+                carrinho.Ativo = false;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//

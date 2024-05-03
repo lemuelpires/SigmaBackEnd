@@ -41,16 +41,6 @@ namespace sigmaBack.Infra.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoverPedido(int id)
-        {
-            var pedido = await _dbContext.Pedidos.FindAsync(id);
-            if (pedido != null)
-            {
-                _dbContext.Pedidos.Remove(pedido);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
-
         public async Task<IEnumerable<ItemPedido>> ObterItensDoPedido(int idPedido)
         {
             return await _dbContext.ItensPedidos.Where(i => i.IDPedido == idPedido).ToListAsync();
@@ -66,16 +56,24 @@ namespace sigmaBack.Infra.Data.Repositories
             }
         }
 
-
-        public async Task RemoverItemDoPedido(int idItemPedido)
+        public async Task DesabilitarPedido(int id)
         {
-            var itemPedido = await _dbContext.ItensPedidos.FindAsync(idItemPedido);
-            if (itemPedido != null)
+            var pedido = await _dbContext.Pedidos.FindAsync(id);
+            if (pedido != null)
             {
-                _dbContext.ItensPedidos.Remove(itemPedido);
+                pedido.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task HabilitarPedido(int id)
+        {
+            var pedido = await _dbContext.Pedidos.FindAsync(id);
+            if (pedido != null)
+            {
+                pedido.Ativo = true;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//

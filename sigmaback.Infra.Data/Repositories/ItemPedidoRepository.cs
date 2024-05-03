@@ -23,8 +23,16 @@ namespace SigmaBack.Infra.Data.Repositories
 
         public async Task<ItemPedido> ObterItemPedidoPorId(int id)
         {
-            return await _dbContext.ItensPedidos.FindAsync(id);
+            var itemPedido = await _dbContext.ItensPedidos.FindAsync(id);
+            if (itemPedido == null)
+            {
+                // Tratar o caso em que o item de pedido não foi encontrado
+                // Por exemplo, lançar uma exceção ou retornar um valor padrão
+                throw new Exception($"Item de pedido com ID {id} não encontrado.");
+            }
+            return itemPedido;
         }
+
 
         public async Task<int> CriarNovoItemPedido(ItemPedido itemPedido)
         {
@@ -33,21 +41,29 @@ namespace SigmaBack.Infra.Data.Repositories
             return itemPedido.IDItemPedido; // Retornando o ID do item de pedido criado
         }
 
-        public async Task AtualizarItemPedido(ItemPedido itemPedido)
+        public async Task AtualizarItemPedido( ItemPedido itemPedido)
         {
             _dbContext.Entry(itemPedido).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
-
-        public async Task RemoverItemPedido(int id)
+        public async Task DesabilitarItemPedido(int id)
         {
             var itemPedido = await _dbContext.ItensPedidos.FindAsync(id);
             if (itemPedido != null)
             {
-                _dbContext.ItensPedidos.Remove(itemPedido);
+                itemPedido.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task HabilitarItemPedido(int id)
+        {
+            var itemPedido = await _dbContext.ItensPedidos.FindAsync(id);
+            if (itemPedido != null)
+            {
+                itemPedido.Ativo = true;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//

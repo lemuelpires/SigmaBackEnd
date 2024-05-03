@@ -14,8 +14,8 @@ namespace sigmaBack.Infra.Data.Contexts
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+                .AddJsonFile("appsettings.Development.json")
+                .AddJsonFile($"appsettings.Development{environmentName}.json", optional: true)
                 .Build();
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -28,4 +28,3 @@ namespace sigmaBack.Infra.Data.Contexts
 
     }
 }
-//

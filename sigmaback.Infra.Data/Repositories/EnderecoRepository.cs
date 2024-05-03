@@ -40,15 +40,24 @@ namespace sigmaBack.Infra.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoverEndereco(int id)
+        public async Task DesabilitarEndereco(int id)
         {
             var endereco = await _dbContext.Enderecos.FindAsync(id);
             if (endereco != null)
             {
-                _dbContext.Enderecos.Remove(endereco);
+                endereco.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task HabilitarEndereco(int id)
+        {
+            var endereco = await _dbContext.Enderecos.FindAsync(id);
+            if (endereco != null)
+            {
+                endereco.Ativo = true;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//

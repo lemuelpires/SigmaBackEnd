@@ -31,7 +31,7 @@ namespace sigmaBack.Infra.Data.Repositories
         {
             _dbContext.Categorias.Add(categoria);
             await _dbContext.SaveChangesAsync();
-            return categoria.IDCategoria; // Supondo que o ID seja gerado automaticamente
+            return categoria.IDCategoria; 
         }
 
         public async Task AtualizarCategoria(Categoria categoria)
@@ -40,15 +40,23 @@ namespace sigmaBack.Infra.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoverCategoria(int id)
+        public async Task DesabilitarCategoria(int id)
         {
             var categoria = await _dbContext.Categorias.FindAsync(id);
             if (categoria != null)
             {
-                _dbContext.Categorias.Remove(categoria);
+                categoria.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+        public async Task HabilitarCategoria(int id)
+        {
+            var categoria = await _dbContext.Categorias.FindAsync(id);
+            if (categoria != null)
+            {
+                categoria.Ativo = true;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//

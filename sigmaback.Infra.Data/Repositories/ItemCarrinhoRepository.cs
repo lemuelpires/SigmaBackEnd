@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace sigmaBack.Infra.Data.Repositories
 {
@@ -40,15 +40,24 @@ namespace sigmaBack.Infra.Data.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoverItemCarrinho(int id)
+        public async Task DesabilitarItemCarrinho(int id)
         {
             var itemCarrinho = await _dbContext.ItensCarrinhos.FindAsync(id);
             if (itemCarrinho != null)
             {
-                _dbContext.ItensCarrinhos.Remove(itemCarrinho);
+                itemCarrinho.Ativo = false;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task HabilitarItemCarrinho(int id)
+        {
+            var itemCarrinho = await _dbContext.ItensCarrinhos.FindAsync(id);
+            if (itemCarrinho != null)
+            {
+                itemCarrinho.Ativo = true;
                 await _dbContext.SaveChangesAsync();
             }
         }
     }
 }
-//
