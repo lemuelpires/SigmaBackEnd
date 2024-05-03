@@ -21,9 +21,8 @@ namespace sigmaBack.Application.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Obtém a lista da previsão de tempo")]
+        [SwaggerOperation(Summary = "Obtém a lista de avaliações")]
         [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de avaliações", typeof(IEnumerable<Avaliacao>))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor")]
         public async Task<ActionResult<IEnumerable<Avaliacao>>> Get()
         {
@@ -85,15 +84,34 @@ namespace sigmaBack.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Exclui uma avaliação existente")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Avaliação excluída com sucesso")]
+        [HttpPatch("{id}/disable")]
+        [SwaggerOperation(Summary = "Desabilita uma avaliação existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Avaliação desabilitada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Avaliação não encontrada")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Disable(int id)
         {
             try
             {
-                await _avaliacaoService.DeleteAvaliacaoAsync(id);
+                await _avaliacaoService.DisabilitarAvaliacaoAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}/enable")]
+        [SwaggerOperation(Summary = "Habilita uma avaliação existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Avaliação habilitada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Avaliação não encontrada")]
+        public async Task<IActionResult> Enable(int id)
+        {
+            try
+            {
+                await _avaliacaoService.HabilitarAvaliacaoAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -103,4 +121,3 @@ namespace sigmaBack.Application.Controllers
         }
     }
 }
-//

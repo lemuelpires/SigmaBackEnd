@@ -10,6 +10,7 @@ namespace SigmaBack.Domain.Interfaces
         Task<Categoria> ObterCategoriaPorId(int id);
         Task<int> CriarNovaCategoria(Categoria categoria);
         Task AtualizarCategoria(Categoria categoria);
-        Task RemoverCategoria(int id);
+        Task DesabilitarCategoria(int id);
+        Task HabilitarCategoria(int id);
     }
 }

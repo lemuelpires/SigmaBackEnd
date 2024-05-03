@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Annotations; // Adicionando namespace necessário
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace sigmaBack.API.Controllers
+namespace sigmaBack.Application.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -21,67 +21,59 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Obtém todos os pedidos.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os pedidos.", typeof(IEnumerable<Pedido>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> ObterTodosPedidos()
+        [SwaggerOperation(Summary = "Obtém a lista de pedidos")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de pedidos", typeof(IEnumerable<Pedido>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor")]
+        public async Task<ActionResult<IEnumerable<Pedido>>> Get()
         {
-            try
-            {
-                var pedidos = await _pedidoService.ObterTodosPedidos();
-                return Ok(pedidos);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter pedidos: {ex.Message}");
-            }
+            var pedidos = await _pedidoService.ObterTodosPedidos();
+            return Ok(pedidos);
         }
 
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Obtém um pedido por ID.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Pedido encontrado.", typeof(Pedido))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Pedido não encontrado.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> ObterPedidoPorId(int id)
+        [SwaggerOperation(Summary = "Obtém um pedido por ID")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna o pedido encontrado", typeof(Pedido))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Pedido não encontrado")]
+        public async Task<ActionResult<Pedido>> GetById(int id)
         {
-            try
+            var pedido = await _pedidoService.ObterPedidoPorId(id);
+            if (pedido == null)
             {
-                var pedido = await _pedidoService.ObterPedidoPorId(id);
-                if (pedido == null)
-                    return NotFound();
-
-                return Ok(pedido);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter pedido: {ex.Message}");
-            }
+            return Ok(pedido);
         }
 
         [HttpPost]
-        [SwaggerOperation(Summary = "Cria um novo pedido.")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Pedido criado com sucesso.", typeof(Pedido))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> CriarPedido([FromBody] Pedido pedido)
+        [SwaggerOperation(Summary = "Cria um novo pedido")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Pedido criado com sucesso", typeof(Pedido))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        public async Task<ActionResult<Pedido>> Post(Pedido pedido)
         {
             try
             {
-                var idPedido = await _pedidoService.CriarPedido(pedido);
-                return CreatedAtAction(nameof(ObterPedidoPorId), new { id = idPedido }, pedido);
+                var createdPedidoId = await _pedidoService.CriarPedido(pedido);
+                var createdPedido = await _pedidoService.ObterPedidoPorId(createdPedidoId);
+                return CreatedAtAction(nameof(GetById), new { id = createdPedidoId }, createdPedido);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao criar pedido: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Atualiza um pedido.")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido atualizado com sucesso.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> AtualizarPedido(int id, [FromBody] Pedido pedido)
+        [SwaggerOperation(Summary = "Atualiza um pedido existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido atualizado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Pedido não encontrado")]
+        public async Task<IActionResult> Put(int id, Pedido pedido)
         {
+            if (id != pedido.IDPedido)
+            {
+                return BadRequest("ID do pedido não corresponde ao ID na URL.");
+            }
+
             try
             {
                 await _pedidoService.AtualizarPedido(id, pedido);
@@ -89,26 +81,44 @@ namespace sigmaBack.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao atualizar pedido: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Remove um pedido.")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido removido com sucesso.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> RemoverPedido(int id)
+        [HttpPatch("{id}/disable")]
+        [SwaggerOperation(Summary = "Desabilita um pedido existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido desabilitado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Pedido não encontrado")]
+        public async Task<IActionResult> Disable(int id)
         {
             try
             {
-                await _pedidoService.RemoverPedido(id);
+                await _pedidoService.DesabilitarPedido(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao remover pedido: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}/enable")]
+        [SwaggerOperation(Summary = "Habilita um pedido existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Pedido habilitado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Pedido não encontrado")]
+        public async Task<IActionResult> Enable(int id)
+        {
+            try
+            {
+                await _pedidoService.HabilitarPedido(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
 }
-//

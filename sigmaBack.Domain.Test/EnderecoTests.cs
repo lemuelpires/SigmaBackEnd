@@ -18,7 +18,7 @@ namespace sigmaBack.Domain.Test
             string pais = "País A";
 
             // Act
-            var endereco = new Endereco(idUsuario, rua, cidade, estado, cep, pais);
+            var endereco = new Endereco(idUsuario, rua, cidade, estado, cep, pais, true);
 
             // Assert
             Assert.NotNull(endereco);
@@ -28,18 +28,22 @@ namespace sigmaBack.Domain.Test
             Assert.Equal(estado, endereco.Estado);
             Assert.Equal(cep, endereco.CEP);
             Assert.Equal(pais, endereco.Pais);
+            Assert.True(endereco.Ativo);
         }
 
         [Theory]
         [InlineData(-1, "Rua A", "Cidade A", "Estado A", "12345678", "País A")]
-        // Adicione mais casos de teste com campos obrigatórios em branco ou inválidos
+        [InlineData(1, "", "Cidade A", "Estado A", "12345678", "País A")]
+        [InlineData(1, "Rua A", "", "Estado A", "12345678", "País A")]
+        [InlineData(1, "Rua A", "Cidade A", "", "12345678", "País A")]
+        [InlineData(1, "Rua A", "Cidade A", "Estado A", "", "País A")]
+        [InlineData(1, "Rua A", "Cidade A", "Estado A", "12345678", "")]
         public void Endereco_ComCampoObrigatorioEmBrancoOuInvalido_DeveLancarExcecao(int idUsuario, string rua, string cidade, string estado, string cep, string pais)
         {
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Endereco(idUsuario, rua, cidade, estado, cep, pais));
+            Assert.Throws<DomainExceptionValidation>(() => new Endereco(idUsuario, rua, cidade, estado, cep, pais, true));
         }
 
         // Adicione mais testes para outros cenários, como CEP inválido, etc.
     }
 }
-//

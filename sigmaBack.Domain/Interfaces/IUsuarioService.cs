@@ -8,9 +8,10 @@ namespace SigmaBack.Domain.Interfaces
     {
         Task<IEnumerable<Usuario>> ObterTodosUsuarios();
         Task<Usuario> ObterUsuarioPorId(int id);
-        Task<int> RegistrarNovoUsuario(Usuario usuario); // Alterado de CriarUsuario para RegistrarNovoUsuario
-        Task AtualizarPerfilUsuario(Usuario usuario); // Alterado de AtualizarUsuario para AtualizarPerfilUsuario
-        Task RemoverUsuario(int id);
+        Task<int> RegistrarNovoUsuario(Usuario usuario);
+        Task AtualizarPerfilUsuario(Usuario usuario);
+        Task HabilitarUsuario(int id);
+        Task DesabilitarUsuario(int id);
         Task<bool> VerificarExistenciaEmail(string email);
         Task<bool> AutenticarUsuario(string email, string senha);
         Task<bool> AlterarSenha(int idUsuario, string senhaAntiga, string novaSenha);

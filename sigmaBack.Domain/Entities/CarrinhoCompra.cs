@@ -8,19 +8,22 @@ namespace sigmaBack.Domain.Entities
         public int IDCarrinho { get; set; }
         public int IDUsuario { get; set; }
         public DateTime DataHoraCriacaoCarrinho { get; set; }
+        public bool Ativo { get; set; } // Novo campo
+
         public Usuario? Usuario { get; set; }
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
 
         // Adicione um construtor vazio protegido para o Entity Framework Core
         public CarrinhoCompra() { }
 
-        public CarrinhoCompra(int idUsuario, DateTime dataHoraCriacaoCarrinho)
+        public CarrinhoCompra(int idUsuario, DateTime dataHoraCriacaoCarrinho, bool ativo)
         {
             ValidationDomain(idUsuario, dataHoraCriacaoCarrinho);
+            Ativo = ativo; // Defina o valor do novo campo
         }
 
-        public CarrinhoCompra(int idCarrinho, int idUsuario, DateTime dataHoraCriacaoCarrinho)
-            : this(idUsuario, dataHoraCriacaoCarrinho)
+        public CarrinhoCompra(int idCarrinho, int idUsuario, DateTime dataHoraCriacaoCarrinho, bool ativo)
+            : this(idUsuario, dataHoraCriacaoCarrinho, ativo)
         {
             IDCarrinho = idCarrinho;
         }
@@ -34,9 +37,10 @@ namespace sigmaBack.Domain.Entities
             DataHoraCriacaoCarrinho = dataHoraCriacaoCarrinho;
         }
 
-        public void Update(int idUsuario, DateTime dataHoraCriacaoCarrinho)
+        public void Update(int idUsuario, DateTime dataHoraCriacaoCarrinho, bool ativo)
         {
             ValidationDomain(idUsuario, dataHoraCriacaoCarrinho);
+            Ativo = ativo; // Atualize o valor do novo campo
         }
     }
 }

@@ -14,6 +14,7 @@ namespace SigmaBack.Domain.Interfaces
         Task<IEnumerable<Produto>> PesquisarProdutos(string termoPesquisa);
         Task InserirProduto(Produto produto);
         Task AtualizarProduto(Produto produto);
-        Task RemoverProduto(int id);
+        Task HabilitarProduto(int id);
+        Task DesabilitarProduto(int id);
     }
 }

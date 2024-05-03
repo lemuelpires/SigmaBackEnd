@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
-using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
-using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Annotations; // Adicionando namespace necessário
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace sigmaBack.API.Controllers
+namespace sigmaBack.Application.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -22,66 +21,59 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Obtém todas as categorias.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todas as categorias.", typeof(IEnumerable<Categoria>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> ObterTodasCategorias()
+        [SwaggerOperation(Summary = "Obtém a lista de categorias")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de categorias", typeof(IEnumerable<Categoria>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor")]
+        public async Task<ActionResult<IEnumerable<Categoria>>> Get()
         {
-            try
-            {
-                var categorias = await _categoriaService.ObterTodasCategorias();
-                return Ok(categorias);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter categorias: {ex.Message}");
-            }
+            var categorias = await _categoriaService.ObterTodasCategorias();
+            return Ok(categorias);
         }
 
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Obtém uma categoria por ID.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Categoria encontrada.", typeof(Categoria))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Categoria não encontrada.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> ObterCategoriaPorId(int id)
+        [SwaggerOperation(Summary = "Obtém uma categoria por ID")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a categoria encontrada", typeof(Categoria))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Categoria não encontrada")]
+        public async Task<ActionResult<Categoria>> GetById(int id)
         {
-            try
+            var categoria = await _categoriaService.ObterCategoriaPorId(id);
+            if (categoria == null)
             {
-                var categoria = await _categoriaService.ObterCategoriaPorId(id);
-                if (categoria == null)
-                    return NotFound();
-
-                return Ok(categoria);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter categoria: {ex.Message}");
-            }
+            return Ok(categoria);
         }
 
         [HttpPost]
-        [SwaggerOperation(Summary = "Cria uma nova categoria.")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Categoria criada com sucesso.", typeof(Categoria))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> CriarNovaCategoria([FromBody] Categoria categoria)
+        [SwaggerOperation(Summary = "Cria uma nova categoria")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Categoria criada com sucesso", typeof(Categoria))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        public async Task<ActionResult<Categoria>> Post(Categoria categoria)
         {
             try
             {
-                var idCategoria = await _categoriaService.CriarNovaCategoria(categoria);
-                return CreatedAtAction(nameof(ObterCategoriaPorId), new { id = idCategoria }, categoria);
+                var createdCategoriaId = await _categoriaService.CriarNovaCategoria(categoria);
+                var createdCategoria = await _categoriaService.ObterCategoriaPorId(createdCategoriaId);
+                return CreatedAtAction(nameof(GetById), new { id = createdCategoriaId }, createdCategoria);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao criar categoria: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Atualiza uma categoria existente.")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria atualizada com sucesso.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> AtualizarCategoria(int id, [FromBody] Categoria categoria)
+        [SwaggerOperation(Summary = "Atualiza uma categoria existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria atualizada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Categoria não encontrada")]
+        public async Task<IActionResult> Put(int id, Categoria categoria)
         {
+            if (id != categoria.IDCategoria)
+            {
+                return BadRequest("ID da categoria não corresponde ao ID na URL.");
+            }
+
             try
             {
                 await _categoriaService.AtualizarCategoria(categoria);
@@ -89,26 +81,44 @@ namespace sigmaBack.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao atualizar categoria: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Remove uma categoria existente.")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria removida com sucesso.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> RemoverCategoria(int id)
+        [HttpPatch("{id}/disable")]
+        [SwaggerOperation(Summary = "Desabilita uma categoria existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria desabilitada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Categoria não encontrada")]
+        public async Task<IActionResult> Disable(int id)
         {
             try
             {
-                await _categoriaService.RemoverCategoria(id);
+                await _categoriaService.DesabilitarCategoria(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao remover categoria: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}/enable")]
+        [SwaggerOperation(Summary = "Habilita uma categoria existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Categoria habilitada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Categoria não encontrada")]
+        public async Task<IActionResult> Enable(int id)
+        {
+            try
+            {
+                await _categoriaService.HabilitarCategoria(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
 }
-//

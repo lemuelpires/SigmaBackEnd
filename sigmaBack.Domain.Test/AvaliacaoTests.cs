@@ -16,9 +16,10 @@ namespace sigmaBack.Domain.Test
             string comentario = "Ótimo produto!";
             int classificacao = 5;
             DateTime dataAvaliacao = DateTime.Now;
+            bool ativo = true;
 
             // Act
-            var avaliacao = new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao);
+            var avaliacao = new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo);
 
             // Assert
             Assert.NotNull(avaliacao);
@@ -27,6 +28,7 @@ namespace sigmaBack.Domain.Test
             Assert.Equal(comentario, avaliacao.Comentario);
             Assert.Equal(classificacao, avaliacao.Classificacao);
             Assert.Equal(dataAvaliacao, avaliacao.DataAvaliacao);
+            Assert.True(avaliacao.Ativo);
         }
 
         [Fact]
@@ -38,9 +40,10 @@ namespace sigmaBack.Domain.Test
             string comentario = "Ótimo produto!";
             int classificacao = 5;
             DateTime dataAvaliacao = DateTime.Now;
+            bool ativo = true;
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao));
+            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo));
         }
 
         [Fact]
@@ -52,9 +55,10 @@ namespace sigmaBack.Domain.Test
             string comentario = "Ótimo produto!";
             int classificacao = 5;
             DateTime dataAvaliacao = DateTime.Now;
+            bool ativo = true;
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao));
+            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo));
         }
 
         [Fact]
@@ -66,9 +70,10 @@ namespace sigmaBack.Domain.Test
             string comentario = "";
             int classificacao = 5;
             DateTime dataAvaliacao = DateTime.Now;
+            bool ativo = true;
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao));
+            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo));
         }
 
         [Fact]
@@ -80,9 +85,10 @@ namespace sigmaBack.Domain.Test
             string comentario = "Ótimo produto!";
             int classificacao = 6; // Classificação inválida
             DateTime dataAvaliacao = DateTime.Now;
+            bool ativo = true;
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao));
+            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo));
         }
 
         [Fact]
@@ -93,10 +99,12 @@ namespace sigmaBack.Domain.Test
             int idUsuario = 1;
             string comentario = "Ótimo produto!";
             int classificacao = 5;
-            DateTime dataAvaliacao = default; // Data de avaliação inválida
+            DateTime dataAvaliacao = default;
+            bool ativo = true;
+        
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao));
+            Assert.Throws<DomainExceptionValidation>(() => new Avaliacao(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo));
         }
 
         // Adicione mais testes conforme necessário para cobrir outros cenários

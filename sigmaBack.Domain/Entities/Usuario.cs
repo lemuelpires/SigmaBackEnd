@@ -17,7 +17,7 @@ namespace sigmaBack.Domain.Entities
         public string? Genero { get; set; }
         public DateTime DataNascimento { get; set; }
         public string? Telefone { get; set; }
-
+        public bool Ativo { get; set; }
         public ICollection<Pedido>? Pedidos { get; set; }
         public ICollection<CarrinhoCompra>? CarrinhosCompras { get; set; }
         public ICollection<Avaliacao>? Avaliacoes { get; set; }
@@ -26,15 +26,17 @@ namespace sigmaBack.Domain.Entities
         public Usuario()
         {
         }
-        public Usuario(string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone)
+        public Usuario(string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone, bool ativo)
         {
             ValidationDomain(email, nome, sobrenome, senha, genero, dataNascimento, telefone);
+            Ativo = ativo;
         }
 
-        public Usuario(int idUsuario, string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone)
+        public Usuario(int idUsuario, string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone, bool ativo)
         {
             IDUsuario = idUsuario;
             ValidationDomain(email, nome, sobrenome, senha, genero, dataNascimento, telefone);
+            Ativo = ativo;
         }
 
         private void ValidationDomain(string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone)
@@ -70,10 +72,11 @@ namespace sigmaBack.Domain.Entities
             }
         }
 
-        public void Update(int idUsuario, string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone)
+        public void Update(int idUsuario, string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone, bool ativo)
         {
             ValidationDomain(email, nome, sobrenome, senha, genero, dataNascimento, telefone);
             IDUsuario = idUsuario;
+            Ativo = ativo;
         }
     }
 }

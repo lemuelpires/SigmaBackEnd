@@ -10,7 +10,7 @@ namespace SigmaBack.Domain.Interfaces
         Task<Endereco> ObterEnderecoPorId(int id);
         Task<int> CriarNovoEndereco(Endereco endereco);
         Task AtualizarEndereco(Endereco endereco);
-        Task RemoverEndereco(int id);
+        Task DesabilitarEndereco(int id);
+        Task HabilitarEndereco(int id);
     }
 }
-

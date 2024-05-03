@@ -1,5 +1,4 @@
-﻿// Interface IItemPedidoService
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 
 namespace SigmaBack.Domain.Interfaces
 {
@@ -8,7 +7,9 @@ namespace SigmaBack.Domain.Interfaces
         Task<IEnumerable<ItemPedido>> ObterTodosItensPedido();
         Task<ItemPedido> ObterItemPedidoPorId(int id);
         Task<int> CriarNovoItemPedido(ItemPedido itemPedido);
-        Task AtualizarItemPedido(int id, ItemPedido itemPedido); // Corrigido para aceitar o ID do item
-        Task RemoverItemPedido(int id);
+        Task AtualizarItemPedido(int id, ItemPedido itemPedido); // Adicione o ID do item como parâmetro
+        Task HabilitarItemPedido(int id);
+        Task DesabilitarItemPedido(int id);
     }
 }
+

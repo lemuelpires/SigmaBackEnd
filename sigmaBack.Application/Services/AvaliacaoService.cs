@@ -40,7 +40,7 @@ namespace sigmaBack.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAvaliacaoAsync(int id)
+        public async Task DisabilitarAvaliacaoAsync(int id)
         {
             var avaliacao = await _context.Avaliacoes.FindAsync(id);
             if (avaliacao == null)
@@ -48,9 +48,21 @@ namespace sigmaBack.Application.Services
                 throw new ArgumentException("Avaliação não encontrada.");
             }
 
-            _context.Avaliacoes.Remove(avaliacao);
+            avaliacao.Ativo = false;
             await _context.SaveChangesAsync();
         }
+
+        public async Task HabilitarAvaliacaoAsync(int id)
+        {
+            var avaliacao = await _context.Avaliacoes.FindAsync(id);
+            if (avaliacao == null)
+            {
+                throw new ArgumentException("Avaliação não encontrada.");
+            }
+
+            avaliacao.Ativo = true;
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
-//

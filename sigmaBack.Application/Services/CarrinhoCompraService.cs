@@ -40,7 +40,7 @@ namespace sigmaBack.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoverCarrinho(int id)
+        public async Task DesabilitarCarrinho(int id)
         {
             var carrinho = await _context.CarrinhosCompras.FindAsync(id);
             if (carrinho == null)
@@ -48,9 +48,22 @@ namespace sigmaBack.Application.Services
                 throw new ArgumentException("Carrinho não encontrado.");
             }
 
-            _context.CarrinhosCompras.Remove(carrinho);
+            carrinho.Ativo = true;
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task HabilitarCarrinho(int id)
+        {
+            var carrinho = await _context.CarrinhosCompras.FindAsync(id);
+            if (carrinho == null)
+            {
+                throw new ArgumentException("Não foi possível habilitar o carrinho. Carrinho não encontrado.");
+            }
+
+            carrinho.Ativo = true; // Alterando para habilitar o carrinho
             await _context.SaveChangesAsync();
         }
+
     }
 }
-//

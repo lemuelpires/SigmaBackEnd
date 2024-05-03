@@ -1,6 +1,6 @@
-﻿using sigmaBack.Domain.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using sigmaBack.Domain.Entities;
 
 namespace sigmaBack.Domain.Interfaces
 {
@@ -10,8 +10,11 @@ namespace sigmaBack.Domain.Interfaces
         Task<Avaliacao> GetAvaliacaoByIdAsync(int id);
         Task<Avaliacao> CreateAvaliacaoAsync(Avaliacao avaliacao);
         Task UpdateAvaliacaoAsync(Avaliacao avaliacao);
-        Task DeleteAvaliacaoAsync(int id);
+        Task DisabilitarAvaliacaoAsync(int id);
+        Task HabilitarAvaliacaoAsync(int id);
+
     }
 }
+
 
 

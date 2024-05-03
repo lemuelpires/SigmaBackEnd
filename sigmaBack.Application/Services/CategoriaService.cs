@@ -45,10 +45,14 @@ namespace sigmaBack.Application.Services
             await _categoriaRepository.AtualizarCategoria(categoria);
         }
 
-        public async Task RemoverCategoria(int id)
+        public async Task DesabilitarCategoria(int id)
         {
-            await _categoriaRepository.RemoverCategoria(id);
+            await _categoriaRepository.DesabilitarCategoria(id);
+        }
+
+        public async Task HabilitarCategoria(int id)
+        {
+            await _categoriaRepository.HabilitarCategoria(id);
         }
     }
 }
-//

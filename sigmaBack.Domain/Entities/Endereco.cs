@@ -12,18 +12,21 @@ namespace sigmaBack.Domain.Entities
         public string? Estado { get; set; }
         public string? CEP { get; set; }
         public string? Pais { get; set; }
+        public bool Ativo { get; set; } // Novo campo
 
         public Endereco() { } // Construtor vazio protegido para o Entity Framework Core
 
-        public Endereco(int idUsuario, string rua, string cidade, string estado, string cep, string pais)
+        public Endereco(int idUsuario, string rua, string cidade, string estado, string cep, string pais, bool ativo)
         {
             ValidationDomain(idUsuario, rua, cidade, estado, cep, pais);
+            Ativo = ativo; // Defina o valor do novo campo
         }
 
-        public Endereco(int idEndereco, int idUsuario, string rua, string cidade, string estado, string cep, string pais)
+        public Endereco(int idEndereco, int idUsuario, string rua, string cidade, string estado, string cep, string pais, bool ativo)
         {
             IDEndereco = idEndereco;
             ValidationDomain(idUsuario, rua, cidade, estado, cep, pais);
+            Ativo = ativo; // Defina o valor do novo campo
         }
 
         private void ValidationDomain(int idUsuario, string rua, string cidade, string estado, string cep, string pais)
@@ -43,10 +46,11 @@ namespace sigmaBack.Domain.Entities
             Pais = pais;
         }
 
-        public void Update(int idEndereco, int idUsuario, string rua, string cidade, string estado, string cep, string pais)
+        public void Update(int idEndereco, int idUsuario, string rua, string cidade, string estado, string cep, string pais, bool ativo)
         {
             ValidationDomain(idUsuario, rua, cidade, estado, cep, pais);
             IDEndereco = idEndereco;
+            Ativo = ativo; // Atualize o valor do novo campo
         }
     }
 }

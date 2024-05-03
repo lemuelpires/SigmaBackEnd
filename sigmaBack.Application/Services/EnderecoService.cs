@@ -45,10 +45,14 @@ namespace sigmaBack.Application.Services
             await _enderecoRepository.AtualizarEndereco(endereco);
         }
 
-        public async Task RemoverEndereco(int id)
+        public async Task DesabilitarEndereco(int id)
         {
-            await _enderecoRepository.RemoverEndereco(id);
+            await _enderecoRepository.DesabilitarEndereco(id);
+        }
+
+        public async Task HabilitarEndereco(int id)
+        {
+            await _enderecoRepository.HabilitarEndereco(id);
         }
     }
 }
-//

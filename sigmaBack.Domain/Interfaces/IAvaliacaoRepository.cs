@@ -10,7 +10,8 @@ namespace SigmaBack.Domain.Interfaces
         Task<Avaliacao> ObterAvaliacaoPorId(int id);
         Task<int> CriarNovaAvaliacao(Avaliacao avaliacao);
         Task AtualizarAvaliacao(Avaliacao avaliacao);
-        Task RemoverAvaliacao(int id);
+        Task DesabilitarAvaliacao(int id); 
     }
 }
+
 

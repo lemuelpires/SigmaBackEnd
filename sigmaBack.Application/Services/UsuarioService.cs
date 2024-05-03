@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SigmaBack.Application.Services
 {
@@ -11,7 +12,7 @@ namespace SigmaBack.Application.Services
 
         public UsuarioService(IUsuarioRepository usuarioRepository)
         {
-            _usuarioRepository = usuarioRepository;
+            _usuarioRepository = usuarioRepository ?? throw new ArgumentNullException(nameof(usuarioRepository));
         }
 
         public async Task<IEnumerable<Usuario>> ObterTodosUsuarios()
@@ -26,6 +27,16 @@ namespace SigmaBack.Application.Services
 
         public async Task<int> RegistrarNovoUsuario(Usuario usuario)
         {
+            if (usuario == null)
+            {
+                throw new ArgumentNullException(nameof(usuario));
+            }
+
+            if (await VerificarExistenciaEmail(usuario.Email))
+            {
+                throw new InvalidOperationException("O email já está em uso por outro usuário.");
+            }
+
             return await _usuarioRepository.InserirUsuario(usuario);
         }
 
@@ -34,67 +45,54 @@ namespace SigmaBack.Application.Services
             await _usuarioRepository.AtualizarUsuario(usuario);
         }
 
-        public async Task RemoverUsuario(int id)
+        public async Task HabilitarUsuario(int id)
         {
-            await _usuarioRepository.RemoverUsuario(id);
+            await _usuarioRepository.HabilitarUsuario(id);
+        }
+
+        public async Task DesabilitarUsuario(int id)
+        {
+            await _usuarioRepository.DesabilitarUsuario(id);
         }
 
         public async Task<bool> VerificarExistenciaEmail(string email)
         {
+            if (email == null)
+            {
+                throw new ArgumentNullException(nameof(email), "O email não pode ser nulo.");
+            }
+
             return await _usuarioRepository.VerificarExistenciaEmail(email);
         }
 
-        public async Task<bool> AutenticarUsuario(string email, string senha)
+        public Task<bool> AutenticarUsuario(string email, string senha)
         {
-            await Task.Run(() =>
-            {
-               
-
-            });
-            // Implemente a autenticação do usuário aqui
-            return false; // Altere isso conforme a lógica de autenticação real
+            // Implemente a lógica para autenticar o usuário
+            return Task.FromResult(false);
         }
 
-        public async Task<bool> AlterarSenha(int idUsuario, string senhaAntiga, string novaSenha)
+        public Task<bool> AlterarSenha(int idUsuario, string senhaAntiga, string novaSenha)
         {
-            await Task.Run(() =>
-            {
-                
-
-            });
-            // Implemente a lógica de alteração de senha aqui
-            return false; // Altere isso conforme a lógica real
+            // Implemente a lógica para alterar a senha do usuário
+            return Task.FromResult(false);
         }
 
-        public async Task<IEnumerable<Endereco>> ObterEnderecosUsuario(int idUsuario)
+        public Task<IEnumerable<Endereco>> ObterEnderecosUsuario(int idUsuario)
         {
-            await Task.Run(() =>
-            {
-                // Implemente a obtenção de endereços do usuário aqui
-                
-            });
-            return new List<Endereco>(); // Altere isso conforme a lógica real
-           
+            // Implemente a lógica para obter os endereços do usuário
+            return Task.FromResult<IEnumerable<Endereco>>(new List<Endereco>());
         }
 
-        public async Task AdicionarEnderecoUsuario(int idUsuario, Endereco endereco)
+        public Task AdicionarEnderecoUsuario(int idUsuario, Endereco endereco)
         {
-            await Task.Run(() =>
-            {
-            // Implemente a adição de endereço do usuário aqui
-            });
-            
+            // Implemente a lógica para adicionar um endereço ao usuário
+            return Task.CompletedTask;
         }
 
-        public async Task RemoverEnderecoUsuario(int idEndereco)
+        public Task RemoverEnderecoUsuario(int idEndereco)
         {
-            await Task.Run(() =>
-            {
-                // Implemente a remoção de endereço do usuário aqui
-            });
+            // Implemente a lógica para remover um endereço do usuário
+            return Task.CompletedTask;
         }
-
-
     }
 }
-//

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace sigmaBack.API.Controllers
+namespace sigmaBack.Application.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -21,96 +21,103 @@ namespace sigmaBack.API.Controllers
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Obtém todos os usuários.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Lista de todos os usuários.", typeof(IEnumerable<Usuario>))]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> ObterTodosUsuarios()
+        [SwaggerOperation(Summary = "Obtém a lista de usuários")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de usuários", typeof(IEnumerable<Usuario>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor")]
+        public async Task<ActionResult<IEnumerable<Usuario>>> Get()
         {
-            try
-            {
-                var usuarios = await _usuarioService.ObterTodosUsuarios();
-                return Ok(usuarios);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter usuários: {ex.Message}");
-            }
+            var usuarios = await _usuarioService.ObterTodosUsuarios();
+            return Ok(usuarios);
         }
 
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Obtém um usuário por ID.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Usuário encontrado.", typeof(Usuario))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Usuário não encontrado.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> ObterUsuarioPorId(int id)
+        [SwaggerOperation(Summary = "Obtém um usuário por ID")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna o usuário encontrado", typeof(Usuario))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Usuário não encontrado")]
+        public async Task<ActionResult<Usuario>> GetById(int id)
         {
-            try
+            var usuario = await _usuarioService.ObterUsuarioPorId(id);
+            if (usuario == null)
             {
-                var usuario = await _usuarioService.ObterUsuarioPorId(id);
-                if (usuario == null)
-                    return NotFound();
-
-                return Ok(usuario);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter usuário: {ex.Message}");
-            }
+            return Ok(usuario);
         }
 
         [HttpPost]
-        [SwaggerOperation(Summary = "Cria um novo usuário.")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Usuário criado com sucesso.", typeof(Usuario))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> CriarUsuario([FromBody] Usuario usuario)
+        [SwaggerOperation(Summary = "Registra um novo usuário")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Usuário registrado com sucesso", typeof(int))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        public async Task<ActionResult<int>> Post(Usuario usuario)
         {
             try
             {
-                var idUsuario = await _usuarioService.RegistrarNovoUsuario(usuario);
-                return CreatedAtAction(nameof(ObterUsuarioPorId), new { id = idUsuario }, usuario);
+                var userId = await _usuarioService.RegistrarNovoUsuario(usuario);
+                return CreatedAtAction(nameof(GetById), new { id = userId }, userId);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao criar usuário: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Atualiza um usuário.")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Usuário atualizado com sucesso.")]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Erro de solicitação.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> AtualizarUsuario(int id, [FromBody] Usuario usuario)
+        [SwaggerOperation(Summary = "Atualiza o perfil de um usuário")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Perfil de usuário atualizado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Usuário não encontrado")]
+        public async Task<IActionResult> Put(int id, Usuario usuario)
         {
+            if (id != usuario.IDUsuario)
+            {
+                return BadRequest("ID do usuário não corresponde ao ID na URL.");
+            }
+
             try
             {
-                usuario.IDUsuario = id; // Definindo o ID do usuário no objeto
                 await _usuarioService.AtualizarPerfilUsuario(usuario);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao atualizar usuário: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Remove um usuário.")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Usuário removido com sucesso.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor.")]
-        public async Task<IActionResult> RemoverUsuario(int id)
+        [HttpPatch("{id}/disable")]
+        [SwaggerOperation(Summary = "Desabilita um usuário")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Usuário desabilitado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Usuário não encontrado")]
+        public async Task<IActionResult> Disable(int id)
         {
             try
             {
-                await _usuarioService.RemoverUsuario(id);
+                await _usuarioService.DesabilitarUsuario(id);
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro ao remover usuário: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}/enable")]
+        [SwaggerOperation(Summary = "Habilita um usuário")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Usuário habilitado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Usuário não encontrado")]
+        public async Task<IActionResult> Enable(int id)
+        {
+            try
+            {
+                await _usuarioService.HabilitarUsuario(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
 }
-//

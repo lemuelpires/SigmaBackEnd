@@ -9,7 +9,8 @@ namespace SigmaBack.Domain.Interfaces
         Task<ItemCarrinho> ObterItemCarrinhoPorId(int id);
         Task<int> AdicionarItemCarrinho(ItemCarrinho itemCarrinho); // Adicionado o método AdicionarItemCarrinho
         Task AtualizarItemCarrinho(ItemCarrinho itemCarrinho);
-        Task RemoverItemCarrinho(int id);
+        Task HabilitarItemCarrinho(int id);
+        Task DesabilitarItemCarrinho(int id);
     }
 }
 

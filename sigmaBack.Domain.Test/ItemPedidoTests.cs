@@ -1,95 +1,70 @@
-﻿using Xunit;
-using sigmaBack.Domain.Entities;
-using sigmaBack.Domain.Validation;
+﻿using sigmaBack.Domain.Validation;
 
-namespace sigmaBack.Domain.Test
+namespace sigmaBack.Domain.Entities
 {
-    public class ItemPedidoTests
+    public class ItemPedido
     {
-        [Fact]
-        public void ItemPedido_Construtor_DeveInicializarCorretamente()
+        public int IDItemPedido { get; set; }
+        public int IDPedido { get; set; }
+        public int IDProduto { get; set; }
+        public int Quantidade { get; set; }
+        public decimal PrecoUnitario { get; set; }
+        public string? URLImagem { get; set; }
+        public string? DescricaoProduto { get; set; }
+        public bool Ativo { get; set; }
+
+        public ItemPedido() { }
+
+        public ItemPedido(int idPedido, int idProduto, int quantidade, decimal precoUnitario, bool ativo)
         {
-            // Arrange
-            int idPedido = 1;
-            int idProduto = 1;
-            int quantidade = 2;
-            decimal precoUnitario = 50.00m;
-
-            // Act
-            var itemPedido = new ItemPedido(idPedido, idProduto, quantidade, precoUnitario);
-
-            // Assert
-            Assert.NotNull(itemPedido);
-            Assert.Equal(idPedido, itemPedido.IDPedido);
-            Assert.Equal(idProduto, itemPedido.IDProduto);
-            Assert.Equal(quantidade, itemPedido.Quantidade);
-            Assert.Equal(precoUnitario, itemPedido.PrecoUnitario);
+            ValidationDomain(idPedido, idProduto, quantidade, precoUnitario);
+            PrecoUnitario = precoUnitario;
+            IDPedido = idPedido;
+            IDProduto = idProduto;
+            Quantidade = quantidade;
+            Ativo = ativo;
         }
 
-        [Fact]
-        public void ItemPedido_ConstrutorComDescricao_DeveInicializarCorretamente()
+        public ItemPedido(int idItemPedido, int idPedido, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto, bool ativo)
         {
-            // Arrange
-            int idItemPedido = 1;
-            int idPedido = 1;
-            int idProduto = 1;
-            int quantidade = 2;
-            decimal precoUnitario = 50.00m;
-            string urlImagem = "url_da_imagem";
-            string descricaoProduto = "Descrição do produto";
-
-            // Act
-            var itemPedido = new ItemPedido(idItemPedido, idPedido, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
-
-            // Assert
-            Assert.NotNull(itemPedido);
-            Assert.Equal(idItemPedido, itemPedido.IDItemPedido);
-            Assert.Equal(idPedido, itemPedido.IDPedido);
-            Assert.Equal(idProduto, itemPedido.IDProduto);
-            Assert.Equal(quantidade, itemPedido.Quantidade);
-            Assert.Equal(precoUnitario, itemPedido.PrecoUnitario);
-            Assert.Equal(urlImagem, itemPedido.URLImagem);
-            Assert.Equal(descricaoProduto, itemPedido.DescricaoProduto);
+            ValidationDomain(idPedido, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
+            PrecoUnitario = precoUnitario;
+            IDItemPedido = idItemPedido;
+            IDPedido = idPedido;
+            IDProduto = idProduto;
+            Quantidade = quantidade;
+            URLImagem = urlImagem;
+            DescricaoProduto = descricaoProduto;
+            Ativo = ativo;
         }
 
-        [Theory]
-        [InlineData(-1, 1, 2, 50.00, "url_da_imagem", "Descrição do produto")]
-        [InlineData(1, -1, 2, 50.00, "url_da_imagem", "Descrição do produto")]
-        [InlineData(1, 1, -2, 50.00, "url_da_imagem", "Descrição do produto")]
-        [InlineData(1, 1, 2, -50.00, "url_da_imagem", "Descrição do produto")]
-        [InlineData(1, 1, 2, 50.00, "", "Descrição do produto")]
-        [InlineData(1, 1, 2, 50.00, "url_da_imagem", "")]
-        public void ItemPedido_Construtor_ComArgumentosInvalidos_DeveLancarExcecao(int idPedido, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto)
+        private void ValidationDomain(int idPedido, int idProduto, int quantidade, decimal precoUnitario, string urlImagem = "", string descricaoProduto = "")
         {
-            // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new ItemPedido(1, idPedido, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto));
+            DomainExceptionValidation.When(idPedido < 0, "O ID do pedido é obrigatório.");
+            DomainExceptionValidation.When(idProduto < 0, "O ID do produto é obrigatório.");
+            DomainExceptionValidation.When(quantidade <= 0, "A quantidade deve ser maior que zero.");
+            DomainExceptionValidation.When(precoUnitario < 0, "O preço unitário deve ser maior ou igual a zero.");
+
+            // Adicionei uma condição para verificar se a URL da imagem não está vazia
+            if (!string.IsNullOrEmpty(urlImagem))
+            {
+                DomainExceptionValidation.When(string.IsNullOrEmpty(urlImagem), "A URL da imagem é obrigatória.");
+            }
+
+            DomainExceptionValidation.When(string.IsNullOrEmpty(descricaoProduto), "A descrição do produto é obrigatória.");
         }
 
-        [Fact]
-        public void ItemPedido_Update_DeveAtualizarCorretamente()
+        public void Update(int idItemPedido, int idPedido, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto, bool ativo)
         {
-            // Arrange
-            var itemPedido = new ItemPedido(1, 1, 1, 2, 50.00m, "url_da_imagem", "Descrição do produto");
-            int idItemPedido = 2;
-            int idPedido = 2;
-            int idProduto = 2;
-            int quantidade = 3;
-            decimal precoUnitario = 75.00m;
-            string urlImagem = "nova_url_da_imagem";
-            string descricaoProduto = "Nova descrição do produto";
-
-            // Act
-            itemPedido.Update(idItemPedido, idPedido, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
-
-            // Assert
-            Assert.Equal(idItemPedido, itemPedido.IDItemPedido);
-            Assert.Equal(idPedido, itemPedido.IDPedido);
-            Assert.Equal(idProduto, itemPedido.IDProduto);
-            Assert.Equal(quantidade, itemPedido.Quantidade);
-            Assert.Equal(precoUnitario, itemPedido.PrecoUnitario);
-            Assert.Equal(urlImagem, itemPedido.URLImagem);
-            Assert.Equal(descricaoProduto, itemPedido.DescricaoProduto);
+            ValidationDomain(idPedido, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
+            PrecoUnitario = precoUnitario;
+            IDItemPedido = idItemPedido;
+            IDPedido = idPedido;
+            IDProduto = idProduto;
+            Quantidade = quantidade;
+            URLImagem = urlImagem;
+            DescricaoProduto = descricaoProduto;
+            Ativo = ativo;
         }
     }
 }
-//

@@ -1,9 +1,5 @@
 ﻿using System;
 using Xunit;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using sigmaBack.Domain;
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Validation;
 
@@ -23,20 +19,30 @@ namespace sigmaBack.Domain.Test
             string marca = "Marca A";
             string imagemProduto = "imagem-produto.jpg";
             string fichaTecnica = "Ficha Técnica do Produto A";
+            bool ativo = true; // Defina o valor do campo ativo
 
             // Act
-            var produto = new Produto(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
+            var produto = new Produto(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica, ativo);
 
             // Assert
             Assert.NotNull(produto);
+            Assert.Equal(nomeProduto, produto.NomeProduto);
+            Assert.Equal(descricaoProduto, produto.DescricaoProduto);
+            Assert.Equal(preco, produto.Preco);
+            Assert.Equal(quantidadeEstoque, produto.QuantidadeEstoque);
+            Assert.Equal(categoria, produto.Categoria);
+            Assert.Equal(marca, produto.Marca);
+            Assert.Equal(imagemProduto, produto.ImagemProduto);
+            Assert.Equal(fichaTecnica, produto.FichaTecnica);
+            Assert.Equal(ativo, produto.Ativo);
         }
 
         [Theory]
-        [InlineData("", "Descrição do Produto A", 100.00, 10, "Categoria A", "Marca A", "imagem-produto.jpg", "Ficha Técnica do Produto A")]
-        public void Produto_ComCampoObrigatorioEmBranco_DeveLancarExcecao(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica)
+        [InlineData("", "Descrição do Produto A", 100.00, 10, "Categoria A", "Marca A", "imagem-produto.jpg", "Ficha Técnica do Produto A", true)]
+        public void Produto_ComCampoObrigatorioEmBranco_DeveLancarExcecao(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, bool ativo)
         {
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Produto(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica));
+            Assert.Throws<DomainExceptionValidation>(() => new Produto(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica, ativo));
         }
 
         [Fact]
@@ -51,10 +57,12 @@ namespace sigmaBack.Domain.Test
             string marca = "Marca A";
             string imagemProduto = "imagem-produto.jpg";
             string fichaTecnica = "Ficha Técnica do Produto A";
+            bool ativo = true; // Defina o valor do campo ativo
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new Produto(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica));
+            Assert.Throws<DomainExceptionValidation>(() => new Produto(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica, ativo));
         }
     }
 }
-//
+
+

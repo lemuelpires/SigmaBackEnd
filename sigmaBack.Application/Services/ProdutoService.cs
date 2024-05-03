@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SigmaBack.Application.Services
+namespace sigmaBack.Application.Services
 {
     public class ProdutoService : IProdutoService
     {
@@ -47,48 +47,35 @@ namespace SigmaBack.Application.Services
 
         public async Task InserirProduto(Produto produto)
         {
-            if (produto == null)
-            {
-                throw new ArgumentNullException(nameof(produto));
-            }
-
             await _produtoRepository.InserirProduto(produto);
         }
 
         public async Task AtualizarProduto(Produto produto)
         {
-            if (produto == null)
-            {
-                throw new ArgumentNullException(nameof(produto));
-            }
-
             await _produtoRepository.AtualizarProduto(produto);
         }
 
-        public async Task RemoverProduto(int id)
+        public async Task HabilitarProduto(int id)
         {
-            await _produtoRepository.RemoverProduto(id);
+            await _produtoRepository.HabilitarProduto(id);
+        }
+
+        public async Task DesabilitarProduto(int id)
+        {
+            await _produtoRepository.DesabilitarProduto(id);
         }
 
         public async Task AplicarDescontoPromocional(int idProduto, decimal percentualDesconto)
         {
-            await Task.Run(() =>
-            {
-
-
-            });
-            // Lógica para aplicar desconto promocional
+            // Implemente a lógica para aplicar o desconto promocional
+            await Task.Delay(1000); // Exemplo de operação assíncrona simulada com Task.Delay
         }
 
         public async Task VerificarDisponibilidadeEstoque(int idProduto, int quantidadeDesejada)
         {
-            await Task.Run(() =>
-            {
-
-
-            });
-            // Lógica para verificar disponibilidade em estoque
+            // Implemente a lógica para verificar a disponibilidade em estoque
+            await Task.Delay(1000); // Exemplo de operação assíncrona simulada com Task.Delay
         }
+
     }
 }
-//

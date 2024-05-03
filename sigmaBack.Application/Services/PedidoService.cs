@@ -1,9 +1,10 @@
 ﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SigmaBack.Application.Services
+namespace sigmaBack.Application.Services
 {
     public class PedidoService : IPedidoService
     {
@@ -11,38 +12,61 @@ namespace SigmaBack.Application.Services
 
         public PedidoService(IPedidoRepository pedidoRepository)
         {
-            _pedidoRepository = pedidoRepository;
-        }
-
-        public async Task<int> CriarPedido(Pedido pedido)
-        {
-            // Implemente aqui a lógica para criar um novo pedido
-            return await _pedidoRepository.CriarNovoPedido(pedido);
-        }
-
-        public async Task<Pedido> ObterPedidoPorId(int id)
-        {
-            // Implemente aqui a lógica para obter um pedido por ID
-            return await _pedidoRepository.ObterPedidoPorId(id);
+            _pedidoRepository = pedidoRepository ?? throw new ArgumentNullException(nameof(pedidoRepository));
         }
 
         public async Task<IEnumerable<Pedido>> ObterTodosPedidos()
         {
-            // Implemente aqui a lógica para obter todos os pedidos
             return await _pedidoRepository.ObterTodosPedidos();
         }
 
-        public async Task RemoverPedido(int id)
+        public async Task<Pedido> ObterPedidoPorId(int id)
         {
-            // Implemente aqui a lógica para remover um pedido
-            await _pedidoRepository.RemoverPedido(id);
+            return await _pedidoRepository.ObterPedidoPorId(id);
+        }
+
+        public async Task<int> CriarPedido(Pedido pedido)
+        {
+            return await _pedidoRepository.CriarNovoPedido(pedido);
         }
 
         public async Task AtualizarPedido(int id, Pedido pedido)
         {
-            // Implemente aqui a lógica para atualizar um pedido
+            var pedidoExistente = await _pedidoRepository.ObterPedidoPorId(id);
+            if (pedidoExistente == null)
+            {
+                throw new ArgumentException("Pedido não encontrado.");
+            }
+
+            pedidoExistente.DataPedido = pedido.DataPedido;
+            pedidoExistente.IDPedido = pedido.IDPedido;
+            // Atualize outras propriedades conforme necessário
+
+            await _pedidoRepository.AtualizarPedido(pedidoExistente);
+        }
+
+        public async Task HabilitarPedido(int id)
+        {
+            var pedido = await _pedidoRepository.ObterPedidoPorId(id);
+            if (pedido == null)
+            {
+                throw new ArgumentException("Pedido não encontrado.");
+            }
+
+            pedido.Ativo = true;
+            await _pedidoRepository.AtualizarPedido(pedido);
+        }
+
+        public async Task DesabilitarPedido(int id)
+        {
+            var pedido = await _pedidoRepository.ObterPedidoPorId(id);
+            if (pedido == null)
+            {
+                throw new ArgumentException("Pedido não encontrado.");
+            }
+
+            pedido.Ativo = false;
             await _pedidoRepository.AtualizarPedido(pedido);
         }
     }
 }
-//

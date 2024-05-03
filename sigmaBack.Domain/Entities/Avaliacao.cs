@@ -11,17 +11,19 @@ namespace sigmaBack.Domain.Entities
         public string? Comentario { get; set; }
         public int Classificacao { get; set; }
         public DateTime DataAvaliacao { get; set; }
+        public bool Ativo { get; set; } // Novo campo
 
         // Adicione um construtor vazio protegido para o Entity Framework Core
         public Avaliacao() { }
 
-        public Avaliacao(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao)
+        public Avaliacao(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao, bool ativo)
         {
             ValidationDomain(idProduto, idUsuario, comentario, classificacao, dataAvaliacao);
+            Ativo = ativo; // Defina o valor do novo campo
         }
 
-        public Avaliacao(int idAvaliacao, int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao)
-            : this(idProduto, idUsuario, comentario, classificacao, dataAvaliacao)
+        public Avaliacao(int idAvaliacao, int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao, bool ativo)
+            : this(idProduto, idUsuario, comentario, classificacao, dataAvaliacao, ativo)
         {
             IDAvaliacao = idAvaliacao;
         }
@@ -41,9 +43,10 @@ namespace sigmaBack.Domain.Entities
             DataAvaliacao = dataAvaliacao;
         }
 
-        public void Update(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao)
+        public void Update(int idProduto, int idUsuario, string comentario, int classificacao, DateTime dataAvaliacao, bool ativo)
         {
             ValidationDomain(idProduto, idUsuario, comentario, classificacao, dataAvaliacao);
+            Ativo = ativo; // Atualize o valor do novo campo
         }
     }
 }

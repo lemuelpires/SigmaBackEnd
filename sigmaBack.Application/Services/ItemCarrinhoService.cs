@@ -1,10 +1,10 @@
-﻿using System;
+﻿using sigmaBack.Domain.Entities;
+using SigmaBack.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 
-namespace SigmaBack.Application.Services
+namespace sigmaBack.Application.Services
 {
     public class ItemCarrinhoService : IItemCarrinhoService
     {
@@ -27,37 +27,32 @@ namespace SigmaBack.Application.Services
 
         public async Task<int> AdicionarItemCarrinho(ItemCarrinho itemCarrinho)
         {
-            if (itemCarrinho == null)
-            {
-                throw new ArgumentNullException(nameof(itemCarrinho));
-            }
-
-            // Implemente aqui a lógica para adicionar um novo item ao carrinho
-
-            // Exemplo de implementação:
             return await _itemCarrinhoRepository.CriarNovoItemCarrinho(itemCarrinho);
         }
 
         public async Task AtualizarItemCarrinho(ItemCarrinho itemCarrinho)
         {
-            if (itemCarrinho == null)
-            {
-                throw new ArgumentNullException(nameof(itemCarrinho));
-            }
-
-            // Implemente aqui a lógica para atualizar um item do carrinho
-
-            // Exemplo de implementação:
             await _itemCarrinhoRepository.AtualizarItemCarrinho(itemCarrinho);
         }
 
-        public async Task RemoverItemCarrinho(int id)
+        public async Task DesabilitarItemCarrinho(int id)
         {
-            // Implemente aqui a lógica para remover um item do carrinho
+            var itemCarrinho = await _itemCarrinhoRepository.ObterItemCarrinhoPorId(id);
+            if (itemCarrinho != null)
+            {
+                itemCarrinho.Ativo = false;
+                await _itemCarrinhoRepository.AtualizarItemCarrinho(itemCarrinho);
+            }
+        }
 
-            // Exemplo de implementação:
-            await _itemCarrinhoRepository.RemoverItemCarrinho(id);
+        public async Task HabilitarItemCarrinho(int id)
+        {
+            var itemCarrinho = await _itemCarrinhoRepository.ObterItemCarrinhoPorId(id);
+            if (itemCarrinho != null)
+            {
+                itemCarrinho.Ativo = true;
+                await _itemCarrinhoRepository.AtualizarItemCarrinho(itemCarrinho);
+            }
         }
     }
 }
-//

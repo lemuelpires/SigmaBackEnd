@@ -10,7 +10,8 @@ namespace SigmaBack.Domain.Interfaces
         Task<Usuario> ObterUsuarioPorId(int id);
         Task<int> InserirUsuario(Usuario usuario);
         Task AtualizarUsuario(Usuario usuario);
-        Task RemoverUsuario(int id);
+        Task HabilitarUsuario(int id);
+        Task DesabilitarUsuario(int id);
         Task<bool> VerificarExistenciaEmail(string email);
     }
 }

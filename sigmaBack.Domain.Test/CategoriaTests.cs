@@ -28,7 +28,7 @@ namespace sigmaBack.Tests
             var categoria = new Categoria(nomeCategoria);
 
             // Act
-            categoria.Update(novoNomeCategoria);
+            categoria.Update(novoNomeCategoria, true);
 
             // Assert
             Assert.Equal(novoNomeCategoria, categoria.NomeCategoria);
@@ -44,7 +44,8 @@ namespace sigmaBack.Tests
             var categoria = new Categoria(nomeCategoria);
 
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => categoria.Update(novoNomeCategoria));
+            Assert.Throws<DomainExceptionValidation>(() => categoria.Update(novoNomeCategoria, true));
         }
     }
 }
+

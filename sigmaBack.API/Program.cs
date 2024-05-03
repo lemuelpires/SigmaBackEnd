@@ -76,11 +76,9 @@ namespace sigmaBack.API
             services.AddScoped<IItemCarrinhoRepository, ItemCarrinhoRepository>();
             services.AddScoped<IEnderecoService, EnderecoService>();
             services.AddScoped<IEnderecoRepository, EnderecoRepository>();
-            services.AddScoped<ICategoriaService, CategoriaService>();
-            services.AddScoped<ICategoriaRepository, CategoriaRepository>();    
-
-
-
+            services.AddScoped<ICategoriaService, CategoriaService>(); 
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+                   
 
             services.AddSwaggerGen(c =>
             {
@@ -91,7 +89,7 @@ namespace sigmaBack.API
         private static string GetConnectionString()
         {
             var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+                .AddJsonFile("appsettings.Development.json")
                 .Build();
 
             // Obtenha a conexão padrão ou forneça uma string padrão se a chave não for encontrada

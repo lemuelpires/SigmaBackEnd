@@ -18,7 +18,7 @@ namespace sigmaBack.Domain.Test
             string descricaoProduto = "Descrição do Produto";
 
             // Act
-            var itemCarrinho = new ItemCarrinho(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
+            var itemCarrinho = new ItemCarrinho(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto, true);
 
             // Assert
             Assert.NotNull(itemCarrinho);
@@ -28,6 +28,7 @@ namespace sigmaBack.Domain.Test
             Assert.Equal(precoUnitario, itemCarrinho.PrecoUnitario);
             Assert.Equal(urlImagem, itemCarrinho.URLImagem);
             Assert.Equal(descricaoProduto, itemCarrinho.DescricaoProduto);
+            Assert.True(itemCarrinho.Ativo);
         }
 
         [Theory]
@@ -36,10 +37,10 @@ namespace sigmaBack.Domain.Test
         public void ItemCarrinho_ComCampoObrigatorioEmBrancoOuInvalido_DeveLancarExcecao(int idCarrinho, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto)
         {
             // Act & Assert
-            Assert.Throws<DomainExceptionValidation>(() => new ItemCarrinho(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto));
+            Assert.Throws<DomainExceptionValidation>(() => new ItemCarrinho(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto, true));
         }
 
         // Adicione mais testes para outros cenários, como quantidade negativa, etc.
     }
 }
-//
+
