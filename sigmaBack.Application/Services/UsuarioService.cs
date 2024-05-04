@@ -1,8 +1,5 @@
 ﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SigmaBack.Application.Services
 {
@@ -30,6 +27,11 @@ namespace SigmaBack.Application.Services
             if (usuario == null)
             {
                 throw new ArgumentNullException(nameof(usuario));
+            }
+
+            if (string.IsNullOrEmpty(usuario.Email))
+            {
+                throw new ArgumentException("O email do usuário não pode ser nulo ou vazio.", nameof(usuario));
             }
 
             if (await VerificarExistenciaEmail(usuario.Email))
@@ -67,31 +69,26 @@ namespace SigmaBack.Application.Services
 
         public Task<bool> AutenticarUsuario(string email, string senha)
         {
-            // Implemente a lógica para autenticar o usuário
             return Task.FromResult(false);
         }
 
         public Task<bool> AlterarSenha(int idUsuario, string senhaAntiga, string novaSenha)
         {
-            // Implemente a lógica para alterar a senha do usuário
             return Task.FromResult(false);
         }
 
         public Task<IEnumerable<Endereco>> ObterEnderecosUsuario(int idUsuario)
         {
-            // Implemente a lógica para obter os endereços do usuário
             return Task.FromResult<IEnumerable<Endereco>>(new List<Endereco>());
         }
 
         public Task AdicionarEnderecoUsuario(int idUsuario, Endereco endereco)
         {
-            // Implemente a lógica para adicionar um endereço ao usuário
             return Task.CompletedTask;
         }
 
         public Task RemoverEnderecoUsuario(int idEndereco)
         {
-            // Implemente a lógica para remover um endereço do usuário
             return Task.CompletedTask;
         }
     }

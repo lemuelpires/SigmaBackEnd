@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
+using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Infra.Data.Repositories
 {
@@ -24,14 +21,14 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<Endereco> ObterEnderecoPorId(int id)
         {
-            return await _dbContext.Enderecos.FindAsync(id);
+            return await _dbContext.Enderecos.FindAsync(id) ?? throw new ArgumentException("Endereço não encontrado.");
         }
 
         public async Task<int> CriarNovoEndereco(Endereco endereco)
         {
             _dbContext.Enderecos.Add(endereco);
             await _dbContext.SaveChangesAsync();
-            return endereco.IDEndereco; // Supondo que o ID seja gerado automaticamente
+            return endereco.IDEndereco;
         }
 
         public async Task AtualizarEndereco(Endereco endereco)

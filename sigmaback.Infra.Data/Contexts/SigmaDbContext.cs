@@ -68,9 +68,6 @@ namespace sigmaBack.Infra.Data.Contexts
             modelBuilder.Entity<Produto>()
                 .Property(p => p.Preco)
                 .HasColumnType("decimal(18,2)");
-            // Configurações específicas do modelo podem ser adicionadas aqui
-            // Por exemplo, configurações de chaves estrangeiras, índices, etc.
         }
     }
 }
-//

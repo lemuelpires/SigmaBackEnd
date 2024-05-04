@@ -1,6 +1,4 @@
 ﻿using sigmaBack.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SigmaBack.Domain.Interfaces
 {
@@ -12,11 +10,10 @@ namespace SigmaBack.Domain.Interfaces
         Task<IEnumerable<Produto>> ObterProdutosPorPreco(decimal precoMin, decimal precoMax);
         Task<IEnumerable<Produto>> ObterProdutosEmEstoque();
         Task<IEnumerable<Produto>> PesquisarProdutos(string termoPesquisa);
-        Task InserirProduto(Produto produto); // Adicionado o método InserirProduto
+        Task InserirProduto(Produto produto);
         Task AtualizarProduto(Produto produto);
         Task HabilitarProduto(int id);
         Task DesabilitarProduto(int id);
-
         Task AplicarDescontoPromocional(int idProduto, decimal percentualDesconto);
         Task VerificarDisponibilidadeEstoque(int idProduto, int quantidadeDesejada);
     }

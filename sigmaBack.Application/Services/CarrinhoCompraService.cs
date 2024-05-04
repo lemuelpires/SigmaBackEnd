@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Application.Services
 {
@@ -24,7 +21,7 @@ namespace sigmaBack.Application.Services
 
         public async Task<CarrinhoCompra> ObterCarrinhoPorId(int id)
         {
-            return await _context.CarrinhosCompras.FindAsync(id);
+            return await _context.CarrinhosCompras.FindAsync(id) ?? throw new ArgumentException("Avaliação não encontrada.");
         }
 
         public async Task<int> CriarNovoCarrinho(CarrinhoCompra carrinho)

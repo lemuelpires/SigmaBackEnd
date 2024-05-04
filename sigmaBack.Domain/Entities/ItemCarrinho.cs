@@ -11,21 +11,21 @@ namespace sigmaBack.Domain.Entities
         public decimal PrecoUnitario { get; set; }
         public string? URLImagem { get; set; }
         public string? DescricaoProduto { get; set; }
-        public bool Ativo { get; set; } // Novo campo
+        public bool Ativo { get; set; }
 
-        public ItemCarrinho() { } // Construtor vazio protegido para o Entity Framework Core
+        public ItemCarrinho() { }
 
         public ItemCarrinho(int idCarrinho, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto, bool ativo)
         {
             ValidationDomain(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         public ItemCarrinho(int idItemCarrinho, int idCarrinho, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto, bool ativo)
         {
             IDItemCarrinho = idItemCarrinho;
             ValidationDomain(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         private void ValidationDomain(int idCarrinho, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto)
@@ -49,7 +49,7 @@ namespace sigmaBack.Domain.Entities
         {
             ValidationDomain(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto);
             IDItemCarrinho = idItemCarrinho;
-            Ativo = ativo; // Atualize o valor do novo campo
+            Ativo = ativo;
         }
     }
 }

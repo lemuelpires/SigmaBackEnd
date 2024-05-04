@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Application.Services

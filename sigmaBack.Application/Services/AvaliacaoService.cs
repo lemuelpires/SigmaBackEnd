@@ -2,9 +2,6 @@
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace sigmaBack.Application.Services
 {
@@ -24,7 +21,7 @@ namespace sigmaBack.Application.Services
 
         public async Task<Avaliacao> GetAvaliacaoByIdAsync(int id)
         {
-            return await _context.Avaliacoes.FindAsync(id);
+            return await _context.Avaliacoes.FindAsync(id) ?? throw new ArgumentException("Avaliação não encontrada.");
         }
 
         public async Task<Avaliacao> CreateAvaliacaoAsync(Avaliacao avaliacao)
@@ -63,6 +60,5 @@ namespace sigmaBack.Application.Services
             avaliacao.Ativo = true;
             await _context.SaveChangesAsync();
         }
-
     }
 }

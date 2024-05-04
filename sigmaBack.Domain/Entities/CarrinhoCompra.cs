@@ -1,5 +1,4 @@
 ﻿using sigmaBack.Domain.Validation;
-using System;
 
 namespace sigmaBack.Domain.Entities
 {
@@ -8,18 +7,17 @@ namespace sigmaBack.Domain.Entities
         public int IDCarrinho { get; set; }
         public int IDUsuario { get; set; }
         public DateTime DataHoraCriacaoCarrinho { get; set; }
-        public bool Ativo { get; set; } // Novo campo
+        public bool Ativo { get; set; }
 
         public Usuario? Usuario { get; set; }
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
 
-        // Adicione um construtor vazio protegido para o Entity Framework Core
         public CarrinhoCompra() { }
 
         public CarrinhoCompra(int idUsuario, DateTime dataHoraCriacaoCarrinho, bool ativo)
         {
             ValidationDomain(idUsuario, dataHoraCriacaoCarrinho);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         public CarrinhoCompra(int idCarrinho, int idUsuario, DateTime dataHoraCriacaoCarrinho, bool ativo)
@@ -40,7 +38,7 @@ namespace sigmaBack.Domain.Entities
         public void Update(int idUsuario, DateTime dataHoraCriacaoCarrinho, bool ativo)
         {
             ValidationDomain(idUsuario, dataHoraCriacaoCarrinho);
-            Ativo = ativo; // Atualize o valor do novo campo
+            Ativo = ativo;
         }
     }
 }

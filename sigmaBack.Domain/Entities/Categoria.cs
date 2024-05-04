@@ -1,5 +1,4 @@
 ﻿using sigmaBack.Domain.Validation;
-using System;
 
 namespace sigmaBack.Domain.Entities
 {

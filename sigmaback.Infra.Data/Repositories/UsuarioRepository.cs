@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
+using SigmaBack.Domain.Interfaces;
 
 namespace SigmaBack.Infrastructure.Repositories
 {
@@ -23,14 +21,14 @@ namespace SigmaBack.Infrastructure.Repositories
 
         public async Task<Usuario> ObterUsuarioPorId(int id)
         {
-            return await _dbContext.Usuarios.FindAsync(id);
+            return await _dbContext.Usuarios.FindAsync(id) ?? throw new ArgumentException("Usuario não encontrado.");
         }
 
-        public async Task<int> InserirUsuario(Usuario usuario) // Corrigido: Retorno alterado para Task<int>
+        public async Task<int> InserirUsuario(Usuario usuario)
         {
             _dbContext.Usuarios.Add(usuario);
             await _dbContext.SaveChangesAsync();
-            return usuario.IDUsuario; // Retorna o ID do usuário inserido
+            return usuario.IDUsuario;
         }
 
         public async Task AtualizarUsuario(Usuario usuario)

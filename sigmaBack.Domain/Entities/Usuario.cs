@@ -1,9 +1,4 @@
 ﻿using sigmaBack.Domain.Validation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sigmaBack.Domain.Entities
 {
@@ -23,9 +18,8 @@ namespace sigmaBack.Domain.Entities
         public ICollection<Avaliacao>? Avaliacoes { get; set; }
         public ICollection<Endereco>? Enderecos { get; set; }
 
-        public Usuario()
-        {
-        }
+        public Usuario() { }
+
         public Usuario(string email, string nome, string sobrenome, string senha, string genero, DateTime dataNascimento, string telefone, bool ativo)
         {
             ValidationDomain(email, nome, sobrenome, senha, genero, dataNascimento, telefone);

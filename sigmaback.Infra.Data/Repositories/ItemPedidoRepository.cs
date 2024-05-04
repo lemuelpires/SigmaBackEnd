@@ -1,9 +1,7 @@
-﻿using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using sigmaBack.Domain.Entities;
 using sigmaBack.Infra.Data.Contexts;
+using SigmaBack.Domain.Interfaces;
 
 namespace SigmaBack.Infra.Data.Repositories
 {
@@ -13,7 +11,7 @@ namespace SigmaBack.Infra.Data.Repositories
 
         public ItemPedidoRepository(SigmaDbContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<IEnumerable<ItemPedido>> ObterTodosItensPedido()
@@ -26,26 +24,24 @@ namespace SigmaBack.Infra.Data.Repositories
             var itemPedido = await _dbContext.ItensPedidos.FindAsync(id);
             if (itemPedido == null)
             {
-                // Tratar o caso em que o item de pedido não foi encontrado
-                // Por exemplo, lançar uma exceção ou retornar um valor padrão
                 throw new Exception($"Item de pedido com ID {id} não encontrado.");
             }
             return itemPedido;
         }
 
-
         public async Task<int> CriarNovoItemPedido(ItemPedido itemPedido)
         {
             _dbContext.ItensPedidos.Add(itemPedido);
             await _dbContext.SaveChangesAsync();
-            return itemPedido.IDItemPedido; // Retornando o ID do item de pedido criado
+            return itemPedido.IDItemPedido;
         }
 
-        public async Task AtualizarItemPedido( ItemPedido itemPedido)
+        public async Task AtualizarItemPedido(ItemPedido itemPedido)
         {
             _dbContext.Entry(itemPedido).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
+
         public async Task DesabilitarItemPedido(int id)
         {
             var itemPedido = await _dbContext.ItensPedidos.FindAsync(id);

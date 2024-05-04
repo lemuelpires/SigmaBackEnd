@@ -1,6 +1,6 @@
-﻿using Xunit;
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Validation;
+using Xunit;
 
 namespace sigmaBack.Domain.Test
 {
@@ -9,7 +9,6 @@ namespace sigmaBack.Domain.Test
         [Fact]
         public void ItemCarrinho_ComCamposCorretos_DeveSerCriado()
         {
-            // Arrange
             int idCarrinho = 1;
             int idProduto = 1;
             int quantidade = 2;
@@ -17,10 +16,8 @@ namespace sigmaBack.Domain.Test
             string urlImagem = "imagem-produto.jpg";
             string descricaoProduto = "Descrição do Produto";
 
-            // Act
             var itemCarrinho = new ItemCarrinho(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto, true);
 
-            // Assert
             Assert.NotNull(itemCarrinho);
             Assert.Equal(idCarrinho, itemCarrinho.IDCarrinho);
             Assert.Equal(idProduto, itemCarrinho.IDProduto);
@@ -33,14 +30,9 @@ namespace sigmaBack.Domain.Test
 
         [Theory]
         [InlineData(-1, 1, 2, 50.00, "imagem-produto.jpg", "Descrição do Produto")]
-        // Adicione mais casos de teste com campos obrigatórios em branco ou inválidos
         public void ItemCarrinho_ComCampoObrigatorioEmBrancoOuInvalido_DeveLancarExcecao(int idCarrinho, int idProduto, int quantidade, decimal precoUnitario, string urlImagem, string descricaoProduto)
         {
-            // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() => new ItemCarrinho(idCarrinho, idProduto, quantidade, precoUnitario, urlImagem, descricaoProduto, true));
         }
-
-        // Adicione mais testes para outros cenários, como quantidade negativa, etc.
     }
 }
-

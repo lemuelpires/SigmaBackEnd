@@ -1,10 +1,6 @@
-﻿using sigmaBack.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using sigmaBack.Domain.Entities;
 using sigmaBack.Infra.Data.Contexts;
-using System.Linq;
 using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Infra.Data.Repositories
@@ -32,7 +28,7 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<Pedido> ObterPedidoPorId(int id)
         {
-            return await _dbContext.Pedidos.FindAsync(id);
+            return await _dbContext.Pedidos.FindAsync(id) ?? throw new ArgumentException("Pedido não encontrado.");
         }
 
         public async Task AtualizarPedido(Pedido pedido)
@@ -51,6 +47,10 @@ namespace sigmaBack.Infra.Data.Repositories
             var pedido = await _dbContext.Pedidos.Include(p => p.ItensPedidos).FirstOrDefaultAsync(p => p.IDPedido == idPedido);
             if (pedido != null)
             {
+                if (pedido.ItensPedidos == null)
+                {
+                    pedido.ItensPedidos = new List<ItemPedido>(); // Inicialize a lista se for nula
+                }
                 pedido.ItensPedidos.Add(itemPedido);
                 await _dbContext.SaveChangesAsync();
             }

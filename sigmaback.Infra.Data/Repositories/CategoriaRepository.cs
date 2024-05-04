@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
+using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Infra.Data.Repositories
 {
@@ -24,14 +21,14 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<Categoria> ObterCategoriaPorId(int id)
         {
-            return await _dbContext.Categorias.FindAsync(id);
+            return await _dbContext.Categorias.FindAsync(id) ?? throw new ArgumentException("Categoria não encontrada.");
         }
 
         public async Task<int> CriarNovaCategoria(Categoria categoria)
         {
             _dbContext.Categorias.Add(categoria);
             await _dbContext.SaveChangesAsync();
-            return categoria.IDCategoria; 
+            return categoria.IDCategoria;
         }
 
         public async Task AtualizarCategoria(Categoria categoria)

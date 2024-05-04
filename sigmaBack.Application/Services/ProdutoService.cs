@@ -1,8 +1,5 @@
 ﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace sigmaBack.Application.Services
 {
@@ -67,15 +64,12 @@ namespace sigmaBack.Application.Services
 
         public async Task AplicarDescontoPromocional(int idProduto, decimal percentualDesconto)
         {
-            // Implemente a lógica para aplicar o desconto promocional
-            await Task.Delay(1000); // Exemplo de operação assíncrona simulada com Task.Delay
+            await Task.Delay(1000);
         }
 
         public async Task VerificarDisponibilidadeEstoque(int idProduto, int quantidadeDesejada)
         {
-            // Implemente a lógica para verificar a disponibilidade em estoque
-            await Task.Delay(1000); // Exemplo de operação assíncrona simulada com Task.Delay
+            await Task.Delay(1000);
         }
-
     }
 }

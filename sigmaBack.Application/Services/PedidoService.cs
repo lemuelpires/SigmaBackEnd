@@ -1,8 +1,5 @@
 ﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace sigmaBack.Application.Services
 {
@@ -40,7 +37,6 @@ namespace sigmaBack.Application.Services
 
             pedidoExistente.DataPedido = pedido.DataPedido;
             pedidoExistente.IDPedido = pedido.IDPedido;
-            // Atualize outras propriedades conforme necessário
 
             await _pedidoRepository.AtualizarPedido(pedidoExistente);
         }

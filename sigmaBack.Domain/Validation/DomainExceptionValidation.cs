@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace sigmaBack.Domain.Validation
+﻿namespace sigmaBack.Domain.Validation
 {
     public class DomainExceptionValidation : Exception
     {

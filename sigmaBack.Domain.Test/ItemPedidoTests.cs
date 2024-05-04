@@ -45,7 +45,6 @@ namespace sigmaBack.Domain.Entities
             DomainExceptionValidation.When(quantidade <= 0, "A quantidade deve ser maior que zero.");
             DomainExceptionValidation.When(precoUnitario < 0, "O preço unitário deve ser maior ou igual a zero.");
 
-            // Adicionei uma condição para verificar se a URL da imagem não está vazia
             if (!string.IsNullOrEmpty(urlImagem))
             {
                 DomainExceptionValidation.When(string.IsNullOrEmpty(urlImagem), "A URL da imagem é obrigatória.");

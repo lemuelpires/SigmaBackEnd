@@ -1,6 +1,4 @@
 ﻿using sigmaBack.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SigmaBack.Domain.Interfaces
 {

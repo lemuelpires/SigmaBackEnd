@@ -1,6 +1,6 @@
-﻿using Xunit;
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Validation;
+using Xunit;
 
 namespace sigmaBack.Domain.Test
 {
@@ -9,7 +9,6 @@ namespace sigmaBack.Domain.Test
         [Fact]
         public void Endereco_ComCamposCorretos_DeveSerCriado()
         {
-            // Arrange
             int idUsuario = 1;
             string rua = "Rua A";
             string cidade = "Cidade A";
@@ -17,10 +16,8 @@ namespace sigmaBack.Domain.Test
             string cep = "12345678";
             string pais = "País A";
 
-            // Act
             var endereco = new Endereco(idUsuario, rua, cidade, estado, cep, pais, true);
 
-            // Assert
             Assert.NotNull(endereco);
             Assert.Equal(idUsuario, endereco.IDUsuario);
             Assert.Equal(rua, endereco.Rua);
@@ -40,10 +37,7 @@ namespace sigmaBack.Domain.Test
         [InlineData(1, "Rua A", "Cidade A", "Estado A", "12345678", "")]
         public void Endereco_ComCampoObrigatorioEmBrancoOuInvalido_DeveLancarExcecao(int idUsuario, string rua, string cidade, string estado, string cep, string pais)
         {
-            // Act & Assert
             Assert.Throws<DomainExceptionValidation>(() => new Endereco(idUsuario, rua, cidade, estado, cep, pais, true));
         }
-
-        // Adicione mais testes para outros cenários, como CEP inválido, etc.
     }
 }

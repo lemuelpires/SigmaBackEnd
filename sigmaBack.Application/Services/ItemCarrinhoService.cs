@@ -1,8 +1,5 @@
 ﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace sigmaBack.Application.Services
 {

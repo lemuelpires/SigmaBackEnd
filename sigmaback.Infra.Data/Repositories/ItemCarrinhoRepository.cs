@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
+using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Infra.Data.Repositories
 {
@@ -24,14 +21,14 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<ItemCarrinho> ObterItemCarrinhoPorId(int id)
         {
-            return await _dbContext.ItensCarrinhos.FindAsync(id);
+            return await _dbContext.ItensCarrinhos.FindAsync(id) ?? throw new ArgumentException("Item não encontrado.");
         }
 
         public async Task<int> CriarNovoItemCarrinho(ItemCarrinho itemCarrinho)
         {
             _dbContext.ItensCarrinhos.Add(itemCarrinho);
             await _dbContext.SaveChangesAsync();
-            return itemCarrinho.IDItemCarrinho; // Supondo que o ID seja gerado automaticamente
+            return itemCarrinho.IDItemCarrinho;
         }
 
         public async Task AtualizarItemCarrinho(ItemCarrinho itemCarrinho)

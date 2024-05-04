@@ -1,5 +1,4 @@
-﻿// Interface IItemCarrinhoService
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 
 namespace SigmaBack.Domain.Interfaces
 {
@@ -7,7 +6,7 @@ namespace SigmaBack.Domain.Interfaces
     {
         Task<IEnumerable<ItemCarrinho>> ObterTodosItensCarrinho();
         Task<ItemCarrinho> ObterItemCarrinhoPorId(int id);
-        Task<int> AdicionarItemCarrinho(ItemCarrinho itemCarrinho); // Adicionado o método AdicionarItemCarrinho
+        Task<int> AdicionarItemCarrinho(ItemCarrinho itemCarrinho);
         Task AtualizarItemCarrinho(ItemCarrinho itemCarrinho);
         Task HabilitarItemCarrinho(int id);
         Task DesabilitarItemCarrinho(int id);

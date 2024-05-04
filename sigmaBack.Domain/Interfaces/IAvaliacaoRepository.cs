@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 
 namespace SigmaBack.Domain.Interfaces
 {
@@ -10,7 +8,7 @@ namespace SigmaBack.Domain.Interfaces
         Task<Avaliacao> ObterAvaliacaoPorId(int id);
         Task<int> CriarNovaAvaliacao(Avaliacao avaliacao);
         Task AtualizarAvaliacao(Avaliacao avaliacao);
-        Task DesabilitarAvaliacao(int id); 
+        Task DesabilitarAvaliacao(int id);
     }
 }
 

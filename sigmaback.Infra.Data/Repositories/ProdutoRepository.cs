@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using SigmaBack.Domain.Interfaces;
 using sigmaBack.Infra.Data.Contexts;
+using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Infra.Data.Repositories
 {
@@ -24,7 +21,7 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<Produto> ObterProdutoPorId(int id)
         {
-            return await _dbContext.Produtos.FindAsync(id);
+            return await _dbContext.Produtos.FindAsync(id) ?? throw new ArgumentException("Produto não encontrado.");
         }
 
         public async Task<IEnumerable<Produto>> ObterProdutosPorCategoria(string categoria)
@@ -44,7 +41,14 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<IEnumerable<Produto>> PesquisarProdutos(string termoPesquisa)
         {
-            return await _dbContext.Produtos.Where(p => p.NomeProduto.Contains(termoPesquisa)).ToListAsync();
+            if (_dbContext == null || _dbContext.Produtos == null)
+            {
+                throw new NullReferenceException("_dbContext ou _dbContext.Produtos é nulo. Verifique se foram inicializados corretamente.");
+            }
+
+            return await _dbContext.Produtos
+                .Where(p => p.NomeProduto != null && p.NomeProduto.Contains(termoPesquisa))
+                .ToListAsync();
         }
 
         public async Task InserirProduto(Produto produto)
@@ -58,7 +62,6 @@ namespace sigmaBack.Infra.Data.Repositories
             _dbContext.Entry(produto).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
-
 
         public async Task DesabilitarProduto(int id)
         {

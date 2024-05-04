@@ -1,6 +1,4 @@
 ﻿using sigmaBack.Domain.Validation;
-using System;
-using System.Collections.Generic;
 
 namespace sigmaBack.Domain.Entities
 {
@@ -15,21 +13,21 @@ namespace sigmaBack.Domain.Entities
         public string? EnderecoEntrega { get; set; }
         public string? DetalhesEnvio { get; set; }
         public ICollection<ItemPedido>? ItensPedidos { get; set; }
-        public bool Ativo { get; set; } // Novo campo
+        public bool Ativo { get; set; }
 
-        public Pedido() { } // Construtor vazio protegido para o Entity Framework Core
+        public Pedido() { }
 
         public Pedido(int idUsuario, DateTime dataPedido, string statusPedido, decimal totalPedido, string metodoPagamento, string enderecoEntrega, string detalhesEnvio, bool ativo)
         {
             ValidationDomain(idUsuario, dataPedido, statusPedido, totalPedido, metodoPagamento, enderecoEntrega, detalhesEnvio);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         public Pedido(int idPedido, int idUsuario, DateTime dataPedido, string statusPedido, decimal totalPedido, string metodoPagamento, string enderecoEntrega, string detalhesEnvio, bool ativo)
         {
             IDPedido = idPedido;
             ValidationDomain(idUsuario, dataPedido, statusPedido, totalPedido, metodoPagamento, enderecoEntrega, detalhesEnvio);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         private void ValidationDomain(int idUsuario, DateTime dataPedido, string statusPedido, decimal totalPedido, string metodoPagamento, string enderecoEntrega, string detalhesEnvio)
@@ -55,7 +53,7 @@ namespace sigmaBack.Domain.Entities
         {
             ValidationDomain(idUsuario, dataPedido, statusPedido, totalPedido, metodoPagamento, enderecoEntrega, detalhesEnvio);
             IDPedido = idPedido;
-            Ativo = ativo; // Atualize o valor do novo campo
+            Ativo = ativo;
         }
     }
 }

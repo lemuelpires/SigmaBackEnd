@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using sigmaBack.Domain.Entities;
+﻿using sigmaBack.Domain.Entities;
 
 namespace SigmaBack.Domain.Interfaces
 {
@@ -9,7 +7,7 @@ namespace SigmaBack.Domain.Interfaces
         Task<IEnumerable<ItemPedido>> ObterTodosItensPedido();
         Task<ItemPedido> ObterItemPedidoPorId(int id);
         Task<int> CriarNovoItemPedido(ItemPedido itemPedido);
-        Task AtualizarItemPedido( ItemPedido itemPedido);
+        Task AtualizarItemPedido(ItemPedido itemPedido);
         Task HabilitarItemPedido(int id);
         Task DesabilitarItemPedido(int id);
     }

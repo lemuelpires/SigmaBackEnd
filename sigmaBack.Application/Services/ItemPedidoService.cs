@@ -1,8 +1,5 @@
 ﻿using sigmaBack.Domain.Entities;
 using SigmaBack.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace sigmaBack.Application.Services
 {
@@ -32,8 +29,6 @@ namespace sigmaBack.Application.Services
 
         public async Task AtualizarItemPedido(int id, ItemPedido itemPedido)
         {
-            // Implemente a lógica para atualizar o item de pedido com o ID especificado
-            // Você pode chamar os métodos do repositório aqui conforme necessário
             await _itemPedidoRepository.AtualizarItemPedido(itemPedido);
         }
 

@@ -1,6 +1,4 @@
 ﻿using sigmaBack.Domain.Validation;
-using System;
-using System.Collections.Generic;
 
 namespace sigmaBack.Domain.Entities
 {
@@ -18,21 +16,21 @@ namespace sigmaBack.Domain.Entities
         public ICollection<ItemPedido>? ItensPedido { get; set; }
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
         public ICollection<Avaliacao>? Avaliacoes { get; set; }
-        public bool Ativo { get; set; } // Novo campo
+        public bool Ativo { get; set; }
 
-        public Produto() { } // Construtor vazio protegido para o Entity Framework Core
+        public Produto() { }
 
         public Produto(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, bool ativo)
         {
             ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         public Produto(int idProduto, string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, bool ativo)
         {
             IDProduto = idProduto;
             ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
-            Ativo = ativo; // Defina o valor do novo campo
+            Ativo = ativo;
         }
 
         private void ValidationDomain(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica)
@@ -61,7 +59,7 @@ namespace sigmaBack.Domain.Entities
         {
             ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
             IDProduto = idProduto;
-            Ativo = ativo; // Atualize o valor do novo campo
+            Ativo = ativo;
         }
     }
 }
