@@ -58,7 +58,7 @@ namespace sigmaBack.Application.Services
                 throw new ArgumentException("Não foi possível habilitar o carrinho. Carrinho não encontrado.");
             }
 
-            carrinho.Ativo = true; // Alterando para habilitar o carrinho
+            carrinho.Ativo = true;
             await _context.SaveChangesAsync();
         }
 
