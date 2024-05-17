@@ -57,7 +57,17 @@ namespace sigmaBack.API
 
             // Registro do contexto do banco de dados
             services.AddDbContext<sigmaBack.Infra.Data.Contexts.SigmaDbContext>(options =>
-               options.UseSqlServer(GetConnectionString()));
+            options.UseSqlServer(GetConnectionString(), sqlServerOptions =>
+         {
+         sqlServerOptions.EnableRetryOnFailure(
+             maxRetryCount: 5,
+             maxRetryDelay: TimeSpan.FromSeconds(30),
+             errorNumbersToAdd: null
+             );
+         })
+     );
+
+
 
             // Registro do serviço AvaliacaoService
             services.AddScoped<IAvaliacaoService, AvaliacaoService>();
@@ -78,7 +88,16 @@ namespace sigmaBack.API
             services.AddScoped<IEnderecoRepository, EnderecoRepository>();
             services.AddScoped<ICategoriaService, CategoriaService>(); 
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
-                   
+            services.AddScoped<IAnuncioService, AnuncioService>();
+            services.AddScoped<IAnuncioRepository, AnuncioRepository>();
+            services.AddScoped<IUsuarioJogoRepository, UsuarioJogoRepository>();
+            services.AddScoped<IUsuarioJogoService, UsuarioJogoService>();
+            services.AddScoped<IJogoService, JogoService>();
+            services.AddScoped<IJogoRepository, JogoRepository > ();
+            services.AddScoped<IFavoritoService, FavoritoService>();
+            services.AddScoped<IFavoritoRepository, FavoritoRepository>();
+
+
 
             services.AddSwaggerGen(c =>
             {
