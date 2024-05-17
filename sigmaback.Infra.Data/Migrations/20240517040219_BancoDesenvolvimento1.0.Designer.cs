@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sigmaBack.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using sigmaBack.Infra.Data.Contexts;
 namespace sigmaback.Infra.Data.Migrations
 {
     [DbContext(typeof(SigmaDbContext))]
-    partial class SigmaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240517040219_BancoDesenvolvimento1.0")]
+    partial class BancoDesenvolvimento10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
 
 namespace sigmaBack.Infra.Data.Contexts
@@ -23,11 +18,15 @@ namespace sigmaBack.Infra.Data.Contexts
         public DbSet<ItemCarrinho> ItensCarrinhos { get; set; }
         public DbSet<Avaliacao> Avaliacoes { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Jogo> Jogos { get; set; }
+        public DbSet<UsuarioJogo> UsuarioJogos { get; set; }
+        public DbSet<Favorito> Favoritos { get; set; }
+        public DbSet<Anuncio> Anuncios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Avaliacao>()
-         .HasKey(a => a.IDAvaliacao);
+                .HasKey(a => a.IDAvaliacao);
 
             modelBuilder.Entity<CarrinhoCompra>()
                 .HasKey(c => c.IDCarrinho);
@@ -53,9 +52,21 @@ namespace sigmaBack.Infra.Data.Contexts
             modelBuilder.Entity<Categoria>()
                 .HasKey(u => u.IDCategoria);
 
+            modelBuilder.Entity<Jogo>()
+                .HasKey(j => j.IDJogo);
+
+            modelBuilder.Entity<UsuarioJogo>()
+                .HasKey(uj => uj.IDAssociacao);
+
+            modelBuilder.Entity<Favorito>()
+                .HasKey(f => f.IDFavorito);
+
+            modelBuilder.Entity<Anuncio>()
+                .HasKey (an => an.IDAnuncio);
+
             modelBuilder.Entity<ItemCarrinho>()
-      .Property(ic => ic.PrecoUnitario)
-      .HasColumnType("decimal(18,2)");
+                .Property(ic => ic.PrecoUnitario)
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<ItemPedido>()
                 .Property(ip => ip.PrecoUnitario)
@@ -68,6 +79,10 @@ namespace sigmaBack.Infra.Data.Contexts
             modelBuilder.Entity<Produto>()
                 .Property(p => p.Preco)
                 .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Anuncio>()
+              .Property(an => an.Preco)
+              .HasColumnType("decimal(18,2)");
         }
     }
 }
