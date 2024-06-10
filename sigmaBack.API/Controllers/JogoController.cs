@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
-using SigmaBack.Domain.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -118,6 +117,35 @@ namespace sigmaBack.Application.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPatch("{id}/atualizarImagem")]
+        [SwaggerOperation(Summary = "Atualiza a referência da imagem de um jogo")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Imagem atualizada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Jogo não encontrado")]
+        public async Task<IActionResult> AtualizarImagem(int id, [FromBody] AtualizarImagemJogo request)
+        {
+            if (id != request.IdJogo)
+            {
+                return BadRequest("ID do jogo não corresponde ao ID na URL.");
+            }
+
+            if (request.ReferenciaImagemJogo == null)
+            {
+                return BadRequest("A referência da imagem do jogo não pode ser nula.");
+            }
+
+            try
+            {
+                await _jogoService.AtualizarReferenciaImagem(id, request.ReferenciaImagemJogo);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

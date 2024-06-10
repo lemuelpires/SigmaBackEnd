@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using sigmaBack.Domain.Entities;
-using sigmaBack.Infra.Data.Contexts;
 using SigmaBack.Domain.Interfaces;
-using System;
+using sigmaBack.Infra.Data.Contexts;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,7 +31,6 @@ namespace sigmaBack.Infra.Data.Repositories
         {
             return await _dbContext.Jogos.Where(j => j.CategoriaJogo == categoria).ToListAsync();
         }
-
 
         public async Task<IEnumerable<Jogo>> ObterJogosAtivos()
         {
@@ -77,6 +75,15 @@ namespace sigmaBack.Infra.Data.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+
+        public async Task AtualizarReferenciaImagem(int id, string referenciaImagem)
+        {
+            var jogo = await _dbContext.Jogos.FindAsync(id);
+            if (jogo != null)
+            {
+                jogo.ReferenciaImagemJogo = referenciaImagem;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }
-

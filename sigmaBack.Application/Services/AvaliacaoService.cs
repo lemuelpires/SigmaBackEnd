@@ -39,11 +39,8 @@ namespace sigmaBack.Application.Services
 
         public async Task DisabilitarAvaliacaoAsync(int id)
         {
-            var avaliacao = await _context.Avaliacoes.FindAsync(id);
-            if (avaliacao == null)
-            {
-                throw new ArgumentException("Avaliação não encontrada.");
-            }
+            var avaliacao = await _context.Avaliacoes.FindAsync(id)
+            ?? throw new ArgumentException("Avaliação não encontrada.");
 
             avaliacao.Ativo = false;
             await _context.SaveChangesAsync();
@@ -51,12 +48,9 @@ namespace sigmaBack.Application.Services
 
         public async Task HabilitarAvaliacaoAsync(int id)
         {
-            var avaliacao = await _context.Avaliacoes.FindAsync(id);
-            if (avaliacao == null)
-            {
-                throw new ArgumentException("Avaliação não encontrada.");
-            }
-
+            var avaliacao = await _context.Avaliacoes.FindAsync(id)
+            ?? throw new ArgumentException("Avaliação não encontrada.");
+          
             avaliacao.Ativo = true;
             await _context.SaveChangesAsync();
         }

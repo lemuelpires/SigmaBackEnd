@@ -14,5 +14,6 @@ namespace SigmaBack.Domain.Interfaces
         Task AtualizarProduto(Produto produto);
         Task HabilitarProduto(int id);
         Task DesabilitarProduto(int id);
+        Task AtualizarImagemProduto(int idProduto, string imagemProduto);
     }
 }

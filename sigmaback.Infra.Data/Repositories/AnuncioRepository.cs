@@ -2,6 +2,10 @@
 using sigmaBack.Domain.Entities;
 using sigmaBack.Infra.Data.Contexts;
 using SigmaBack.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace sigmaBack.Infra.Data.Repositories
 {
@@ -11,7 +15,7 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public AnuncioRepository(SigmaDbContext dbContext)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<IEnumerable<Anuncio>> ObterTodosAnuncios()
@@ -36,20 +40,21 @@ namespace sigmaBack.Infra.Data.Repositories
 
         public async Task<IEnumerable<Anuncio>> PesquisarAnuncios(string termoPesquisa)
         {
-            if (_dbContext == null || _dbContext.Anuncios == null)
+            if (string.IsNullOrWhiteSpace(termoPesquisa))
             {
-                throw new NullReferenceException("_dbContext ou _dbContext.Anuncios é nulo. Verifique se foram inicializados corretamente.");
+                throw new ArgumentNullException(nameof(termoPesquisa));
             }
 
             return await _dbContext.Anuncios
-                .Where(a => a.Titulo != null && a.Titulo.Contains(termoPesquisa))
+                .Where(a => a.Titulo != null && a.Titulo.Contains(termoPesquisa)) // Verificação de nulidade
                 .ToListAsync();
         }
 
-        public async Task InserirAnuncio(Anuncio anuncio)
+        public async Task<int> CriarAnuncio(Anuncio anuncio)
         {
             _dbContext.Anuncios.Add(anuncio);
             await _dbContext.SaveChangesAsync();
+            return anuncio.IDAnuncio;
         }
 
         public async Task AtualizarAnuncio(Anuncio anuncio)
@@ -77,6 +82,15 @@ namespace sigmaBack.Infra.Data.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+
+        public async Task AtualizarReferenciaImagem(int id, string referenciaImagem)
+        {
+            var anuncio = await _dbContext.Anuncios.FindAsync(id);
+            if (anuncio != null)
+            {
+                anuncio.ReferenciaImagem = referenciaImagem;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }
-

@@ -10,6 +10,7 @@ namespace SigmaBack.Domain.Interfaces
         Task AtualizarAnuncio(int id, Anuncio anuncio);
         Task HabilitarAnuncio(int id);
         Task DesabilitarAnuncio(int id);
+        Task AtualizarReferenciaImagem(int id, string referenciaImagem);
     }
 }
 

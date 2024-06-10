@@ -15,6 +15,6 @@ namespace SigmaBack.Domain.Interfaces
         Task AtualizarJogo(Jogo jogo);
         Task HabilitarJogo(int id);
         Task DesabilitarJogo(int id);
+        Task AtualizarReferenciaImagem(int id, string referenciaImagem);
     }
 }
-

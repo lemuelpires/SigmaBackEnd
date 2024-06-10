@@ -13,7 +13,7 @@ namespace sigmaBack.Application.Controllers
 
         public ProdutoController(IProdutoService produtoService)
         {
-            _produtoService = produtoService;
+            _produtoService = produtoService ?? throw new ArgumentNullException(nameof(produtoService));
         }
 
         [HttpGet]
@@ -108,6 +108,34 @@ namespace sigmaBack.Application.Controllers
             try
             {
                 await _produtoService.HabilitarProduto(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}/atualizarImagem")]
+        [SwaggerOperation(Summary = "Atualiza a referência da imagem de um produto")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Imagem atualizada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Produto não encontrado")]
+        public async Task<IActionResult> AtualizarImagem(int id, [FromBody] AtualizarImagemProduto request)
+        {
+            if (id != request.IdProduto)
+            {
+                return BadRequest("ID do produto não corresponde ao ID na URL.");
+            }
+
+            try
+            {
+                if (request.ImagemProduto == null)
+                {
+                    return BadRequest("A referência da imagem do produto não pode ser nula.");
+                }
+
+                await _produtoService.AtualizarImagemProduto(id, request.ImagemProduto);
                 return NoContent();
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using sigmaBack.Domain.Validation;
+using System;
 
 namespace sigmaBack.Domain.Entities
 {
@@ -13,6 +14,7 @@ namespace sigmaBack.Domain.Entities
         public string? Marca { get; set; }
         public string? ImagemProduto { get; set; }
         public string? FichaTecnica { get; set; }
+        public DateTime Data { get; set; }
         public ICollection<ItemPedido>? ItensPedido { get; set; }
         public ICollection<ItemCarrinho>? ItensCarrinho { get; set; }
         public ICollection<Avaliacao>? Avaliacoes { get; set; }
@@ -20,20 +22,20 @@ namespace sigmaBack.Domain.Entities
 
         public Produto() { }
 
-        public Produto(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, bool ativo)
+        public Produto(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, DateTime data, bool ativo)
         {
-            ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
+            ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica, data);
             Ativo = ativo;
         }
 
-        public Produto(int idProduto, string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, bool ativo)
+        public Produto(int idProduto, string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, DateTime data, bool ativo)
         {
             IDProduto = idProduto;
-            ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
+            ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica, data);
             Ativo = ativo;
         }
 
-        private void ValidationDomain(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica)
+        private void ValidationDomain(string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, DateTime data)
         {
             DomainExceptionValidation.When(string.IsNullOrEmpty(nomeProduto), "O nome do produto é obrigatório.");
             DomainExceptionValidation.When(nomeProduto.Length < 3, "O nome do produto deve ter no mínimo 3 caracteres.");
@@ -45,6 +47,8 @@ namespace sigmaBack.Domain.Entities
 
             DomainExceptionValidation.When(quantidadeEstoque < 0, "A quantidade em estoque do produto deve ser maior ou igual a zero.");
 
+            DomainExceptionValidation.When(data == default, "A data do produto é obrigatória.");
+
             NomeProduto = nomeProduto;
             DescricaoProduto = descricaoProduto;
             Preco = preco;
@@ -53,11 +57,12 @@ namespace sigmaBack.Domain.Entities
             Marca = marca;
             ImagemProduto = imagemProduto;
             FichaTecnica = fichaTecnica;
+            Data = data;
         }
 
-        public void Update(int idProduto, string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, bool ativo)
+        public void Update(int idProduto, string nomeProduto, string descricaoProduto, decimal preco, int quantidadeEstoque, string categoria, string marca, string imagemProduto, string fichaTecnica, DateTime data, bool ativo)
         {
-            ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica);
+            ValidationDomain(nomeProduto, descricaoProduto, preco, quantidadeEstoque, categoria, marca, imagemProduto, fichaTecnica, data);
             IDProduto = idProduto;
             Ativo = ativo;
         }

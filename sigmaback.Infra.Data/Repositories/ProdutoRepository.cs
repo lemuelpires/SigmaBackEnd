@@ -82,5 +82,14 @@ namespace sigmaBack.Infra.Data.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+        public async Task AtualizarImagemProduto(int id, string imagemProduto)
+        {
+            var produto = await _dbContext.Produtos.FindAsync(id);
+            if (produto!= null)
+            {
+                produto.ImagemProduto = imagemProduto;
+                await _dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

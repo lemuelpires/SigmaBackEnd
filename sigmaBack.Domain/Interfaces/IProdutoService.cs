@@ -16,5 +16,6 @@ namespace SigmaBack.Domain.Interfaces
         Task DesabilitarProduto(int id);
         Task AplicarDescontoPromocional(int idProduto, decimal percentualDesconto);
         Task VerificarDisponibilidadeEstoque(int idProduto, int quantidadeDesejada);
+        Task AtualizarImagemProduto(int idProduto, string imagemProduto);
     }
 }

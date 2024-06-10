@@ -60,5 +60,15 @@ namespace sigmaBack.Application.Services
         {
             await _jogoRepository.DesabilitarJogo(id);
         }
+
+        public async Task AtualizarReferenciaImagem(int idJogo, string referenciaImagem)
+        {
+             var jogo = await _jogoRepository.ObterJogoPorId(idJogo)
+             ?? throw new Exception("Jogo não encontrado");
+
+            jogo.ReferenciaImagemJogo = referenciaImagem;
+            await _jogoRepository.AtualizarJogo(jogo);
+
+        }
     }
 }

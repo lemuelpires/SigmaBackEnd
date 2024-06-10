@@ -1,4 +1,7 @@
-﻿using sigmaBack.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using sigmaBack.Domain.Entities;
 
 namespace SigmaBack.Domain.Interfaces
 {
@@ -9,9 +12,11 @@ namespace SigmaBack.Domain.Interfaces
         Task<IEnumerable<Anuncio>> ObterAnunciosPorPreco(decimal precoMin, decimal precoMax);
         Task<IEnumerable<Anuncio>> ObterAnunciosAtivos();
         Task<IEnumerable<Anuncio>> PesquisarAnuncios(string termoPesquisa);
-        Task InserirAnuncio(Anuncio anuncio);
+        Task<int> CriarAnuncio(Anuncio anuncio);
         Task AtualizarAnuncio(Anuncio anuncio);
         Task HabilitarAnuncio(int id);
         Task DesabilitarAnuncio(int id);
+        Task AtualizarReferenciaImagem(int id, string referenciaImagem);
+
     }
 }

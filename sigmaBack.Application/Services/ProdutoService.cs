@@ -1,4 +1,5 @@
 ﻿using sigmaBack.Domain.Entities;
+using sigmaBack.Infra.Data.Repositories;
 using SigmaBack.Domain.Interfaces;
 
 namespace sigmaBack.Application.Services
@@ -70,6 +71,14 @@ namespace sigmaBack.Application.Services
         public async Task VerificarDisponibilidadeEstoque(int idProduto, int quantidadeDesejada)
         {
             await Task.Delay(1000);
+        }
+        public async Task AtualizarImagemProduto(int idProduto, string imagemProduto)
+        {
+            var produto = await _produtoRepository.ObterProdutoPorId(idProduto)
+           ?? throw new Exception("Jogo não encontrado");
+
+            produto.ImagemProduto = imagemProduto;
+            await _produtoRepository.AtualizarProduto(produto);
         }
     }
 }

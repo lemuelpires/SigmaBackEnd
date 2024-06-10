@@ -135,5 +135,33 @@ namespace sigmaBack.Application.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPatch("{id}/atualizarImagem")]
+        [SwaggerOperation(Summary = "Atualiza a referência da imagem de um Anúncio")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Imagem atualizada com sucesso")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Anuncio não encontrado")]
+        public async Task<IActionResult> AtualizarImagem(int id, [FromBody] AtualizarImagemAnuncio request)
+        {
+            if (id != request.IdAnuncio)
+            {
+                return BadRequest("ID do Anúncio não corresponde ao ID na URL.");
+            }
+
+            if (request.ReferenciaImagem== null)
+            {
+                return BadRequest("A referência da imagem do anuncio não pode ser nula.");
+            }
+
+            try
+            {
+                await _anuncioService.AtualizarReferenciaImagem(id, request.ReferenciaImagem);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }
