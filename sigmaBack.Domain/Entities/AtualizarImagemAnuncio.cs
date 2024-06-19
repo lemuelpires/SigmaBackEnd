@@ -1,14 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using sigmaBack.Domain.Validation;
 
 namespace sigmaBack.Domain.Entities
 {
     public class AtualizarImagemAnuncio
     {
-        public int IdAnuncio { get; set; }
-        public string? ReferenciaImagem { get; set; }
+        private int _idAnuncio;
+        private string? _referenciaImagem;
+
+        public int IdAnuncio
+        {
+            get => _idAnuncio;
+            set
+            {
+                DomainExceptionValidation.When(value < 0, "O ID do anúncio deve ser maior ou igual a zero.");
+                _idAnuncio = value;
+            }
+        }
+
+        public string? ReferenciaImagem
+        {
+            get => _referenciaImagem;
+            set => _referenciaImagem = value;
+        }
     }
 }
