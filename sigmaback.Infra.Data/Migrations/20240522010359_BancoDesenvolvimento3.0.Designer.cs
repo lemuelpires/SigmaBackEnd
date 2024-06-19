@@ -11,9 +11,9 @@ using sigmaBack.Infra.Data.Contexts;
 
 namespace sigmaback.Infra.Data.Migrations
 {
-    [DbContext(typeof(sigmaBack.Infra.Data.Contexts.SigmaDbContext))]
-    [Migration("20240503212247_SigmaBancoDesenvolvimento")]
-    partial class SigmaBancoDesenvolvimento
+    [DbContext(typeof(SigmaDbContext))]
+    [Migration("20240522010359_BancoDesenvolvimento3.0")]
+    partial class BancoDesenvolvimento30
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,40 @@ namespace sigmaback.Infra.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("sigmaBack.Domain.Entities.Anuncio", b =>
+                {
+                    b.Property<int>("IDAnuncio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDAnuncio"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IDProduto")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Preco")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ReferenciaImagem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titulo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IDAnuncio");
+
+                    b.ToTable("Anuncios");
+                });
 
             modelBuilder.Entity("sigmaBack.Domain.Entities.Avaliacao", b =>
                 {
@@ -154,6 +188,31 @@ namespace sigmaback.Infra.Data.Migrations
                     b.ToTable("Enderecos");
                 });
 
+            modelBuilder.Entity("sigmaBack.Domain.Entities.Favorito", b =>
+                {
+                    b.Property<int>("IDFavorito")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDFavorito"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("IDProduto")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IDUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImagemProduto")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IDFavorito");
+
+                    b.ToTable("Favoritos");
+                });
+
             modelBuilder.Entity("sigmaBack.Domain.Entities.ItemCarrinho", b =>
                 {
                     b.Property<int>("IDItemCarrinho")
@@ -231,6 +290,46 @@ namespace sigmaback.Infra.Data.Migrations
                     b.ToTable("ItensPedidos");
                 });
 
+            modelBuilder.Entity("sigmaBack.Domain.Entities.Jogo", b =>
+                {
+                    b.Property<int>("IDJogo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDJogo"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CategoriaJogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EspacoDiscoRequerido")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MemoriaRAMRequerida")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomeJogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PlacaVideoRequerida")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProcessadorRequerido")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReferenciaImagemJogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IDJogo");
+
+                    b.ToTable("Jogos");
+                });
+
             modelBuilder.Entity("sigmaBack.Domain.Entities.Pedido", b =>
                 {
                     b.Property<int>("IDPedido")
@@ -287,6 +386,9 @@ namespace sigmaback.Infra.Data.Migrations
                     b.Property<string>("Categoria")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DescricaoProduto")
                         .HasColumnType("nvarchar(max)");
 
@@ -324,6 +426,12 @@ namespace sigmaback.Infra.Data.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
 
+                    b.Property<string>("CPF")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2");
 
@@ -335,6 +443,9 @@ namespace sigmaback.Infra.Data.Migrations
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Senha")
                         .HasColumnType("nvarchar(max)");
@@ -348,6 +459,41 @@ namespace sigmaback.Infra.Data.Migrations
                     b.HasKey("IDUsuario");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("sigmaBack.Domain.Entities.UsuarioJogo", b =>
+                {
+                    b.Property<int>("IDAssociacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDAssociacao"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("IDJogo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IDUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("JogoIDJogo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenciaImagemJogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UsuarioIDUsuario")
+                        .HasColumnType("int");
+
+                    b.HasKey("IDAssociacao");
+
+                    b.HasIndex("JogoIDJogo");
+
+                    b.HasIndex("UsuarioIDUsuario");
+
+                    b.ToTable("UsuarioJogos");
                 });
 
             modelBuilder.Entity("sigmaBack.Domain.Entities.Avaliacao", b =>
@@ -408,6 +554,21 @@ namespace sigmaback.Infra.Data.Migrations
                     b.HasOne("sigmaBack.Domain.Entities.Usuario", null)
                         .WithMany("Pedidos")
                         .HasForeignKey("UsuarioIDUsuario");
+                });
+
+            modelBuilder.Entity("sigmaBack.Domain.Entities.UsuarioJogo", b =>
+                {
+                    b.HasOne("sigmaBack.Domain.Entities.Jogo", "Jogo")
+                        .WithMany()
+                        .HasForeignKey("JogoIDJogo");
+
+                    b.HasOne("sigmaBack.Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioIDUsuario");
+
+                    b.Navigation("Jogo");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("sigmaBack.Domain.Entities.CarrinhoCompra", b =>

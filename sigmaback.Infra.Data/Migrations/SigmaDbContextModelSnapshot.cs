@@ -17,7 +17,7 @@ namespace sigmaback.Infra.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -383,6 +383,9 @@ namespace sigmaback.Infra.Data.Migrations
                     b.Property<string>("Categoria")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DescricaoProduto")
                         .HasColumnType("nvarchar(max)");
 
@@ -420,6 +423,12 @@ namespace sigmaback.Infra.Data.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
 
+                    b.Property<string>("CPF")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2");
 
@@ -431,6 +440,9 @@ namespace sigmaback.Infra.Data.Migrations
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Senha")
                         .HasColumnType("nvarchar(max)");

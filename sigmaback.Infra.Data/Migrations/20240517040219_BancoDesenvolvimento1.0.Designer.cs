@@ -11,7 +11,7 @@ using sigmaBack.Infra.Data.Contexts;
 
 namespace sigmaback.Infra.Data.Migrations
 {
-    [DbContext(typeof(SigmaDbContext))]
+    [DbContext(typeof(sigmaBack.Infra.Data.Contexts.SigmaDbContext))]
     [Migration("20240517040219_BancoDesenvolvimento1.0")]
     partial class BancoDesenvolvimento10
     {

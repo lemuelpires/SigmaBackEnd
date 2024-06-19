@@ -62,7 +62,7 @@ namespace sigmaBack.Infra.Data.Contexts
                 .HasKey(f => f.IDFavorito);
 
             modelBuilder.Entity<Anuncio>()
-                .HasKey (an => an.IDAnuncio);
+                .HasKey(an => an.IDAnuncio);
 
             modelBuilder.Entity<ItemCarrinho>()
                 .Property(ic => ic.PrecoUnitario)

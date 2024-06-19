@@ -1,18 +1,22 @@
-using FluentAssertions.Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 using sigmaBack.Application.Services;
-using sigmaBack.Domain.Interfaces;
-using sigmaBack.Infra.Data.Repositories;
 using SigmaBack.Application.Services;
+using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
+using sigmaBack.Infra.Data.Repositories;
 using SigmaBack.Infra.Data.Repositories;
 using SigmaBack.Infrastructure.Repositories;
+using System;
+using System.Text;
 
 namespace sigmaBack.API
 {
@@ -31,17 +35,20 @@ namespace sigmaBack.API
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SigmaBack v1");
             });
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -53,31 +60,48 @@ namespace sigmaBack.API
 
         private static void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
+
             services.AddControllersWithViews();
 
             // Registro do contexto do banco de dados
             services.AddDbContext<sigmaBack.Infra.Data.Contexts.SigmaDbContext>(options =>
-            options.UseSqlServer(GetConnectionString(), sqlServerOptions =>
-         {
-         sqlServerOptions.EnableRetryOnFailure(
-             maxRetryCount: 5,
-             maxRetryDelay: TimeSpan.FromSeconds(30),
-             errorNumbersToAdd: null
-             );
-         })
-     );
+                options.UseSqlServer(GetConnectionString(), sqlServerOptions =>
+                {
+                    sqlServerOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null
+                    );
+                })
+            );
 
+            // Configuração dos cookies
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.None; // Define o atributo SameSite como None
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+                options.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always; // Certifique-se de que os cookies são enviados apenas em conexões seguras (HTTPS)
+            });
 
+            // Configuração apis correios
+            services.AddHttpClient<CorreiosService>();
+            services.AddControllers();
 
-            // Registro do serviço AvaliacaoService
+            // Registro do serviço AvaliacaoService e outros serviços
             services.AddScoped<IAvaliacaoService, AvaliacaoService>();
             services.AddScoped<ICarrinhoCompraService, CarrinhoCompraService>();
             services.AddScoped<ICarrinhoCompraRepository, CarrinhoCompraRepository>();
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IProdutoRepository,ProdutoRepository>();
-            services.AddScoped<IProdutoService,ProdutoService>();
+            services.AddScoped<IProdutoRepository, ProdutoRepository>();
+            services.AddScoped<IProdutoService, ProdutoService>();
             services.AddScoped<IPedidoService, PedidoService>();
             services.AddScoped<IPedidoRepository, PedidoRepository>();
             services.AddScoped<IItemPedidoService, ItemPedidoService>();
@@ -86,34 +110,89 @@ namespace sigmaBack.API
             services.AddScoped<IItemCarrinhoRepository, ItemCarrinhoRepository>();
             services.AddScoped<IEnderecoService, EnderecoService>();
             services.AddScoped<IEnderecoRepository, EnderecoRepository>();
-            services.AddScoped<ICategoriaService, CategoriaService>(); 
+            services.AddScoped<ICategoriaService, CategoriaService>();
             services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             services.AddScoped<IAnuncioService, AnuncioService>();
             services.AddScoped<IAnuncioRepository, AnuncioRepository>();
             services.AddScoped<IUsuarioJogoRepository, UsuarioJogoRepository>();
             services.AddScoped<IUsuarioJogoService, UsuarioJogoService>();
             services.AddScoped<IJogoService, JogoService>();
-            services.AddScoped<IJogoRepository, JogoRepository > ();
+            services.AddScoped<IJogoRepository, JogoRepository>();
             services.AddScoped<IFavoritoService, FavoritoService>();
             services.AddScoped<IFavoritoRepository, FavoritoRepository>();
 
+            // Configuração do JWT
+            var jwtSection = GetJwtSection();
+            var jwtKey = jwtSection["Key"];
+            if (string.IsNullOrEmpty(jwtKey))
+            {
+                throw new ArgumentNullException(nameof(jwtKey), "Chave JWT não está configurada.");
+            }
 
+            var key = Encoding.ASCII.GetBytes(jwtKey);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "sigmaBack", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Id = "Bearer",
+                        Type = ReferenceType.SecurityScheme
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
             });
         }
 
         private static string GetConnectionString()
         {
+            // Obtém a string de conexão do arquivo appsettings.Development.json
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.Development.json")
                 .Build();
 
-            // Obtenha a conexão padrão ou forneça uma string padrão se a chave não for encontrada
             return config.GetConnectionString("DefaultConnection") ?? "DefaultConnectionString";
         }
 
+        private static IConfigurationSection GetJwtSection()
+        {
+            // Carrega a seção Jwt do arquivo appsettings.Development.json
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.Development.json")
+                .Build();
+
+            return config.GetSection("Jwt");
+        }
     }
 }
