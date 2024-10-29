@@ -1,83 +1,80 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using sigmaBack.Domain.Entities;
 using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace sigmaBack.Application.Controllers
+namespace sigmaBack.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FavoritoController : ControllerBase
+    public class CarrinhoCompraController : ControllerBase
     {
-        private readonly IFavoritoService _favoritoService;
+        private readonly ICarrinhoCompraRepository _carrinhoCompraRepository;
 
-        public FavoritoController(IFavoritoService favoritoService)
+        public CarrinhoCompraController(ICarrinhoCompraRepository carrinhoCompraRepository)
         {
-            _favoritoService = favoritoService;
+            _carrinhoCompraRepository = carrinhoCompraRepository ?? throw new ArgumentNullException(nameof(carrinhoCompraRepository));
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Obtém a lista de favoritos")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de favoritos", typeof(IEnumerable<Favorito>))]
+        [SwaggerOperation(Summary = "Obtém a lista de carrinhos de compra")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna a lista de carrinhos de compra", typeof(IEnumerable<CarrinhoCompra>))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Erro interno do servidor")]
-        public async Task<ActionResult<IEnumerable<Favorito>>> Get()
+        public async Task<ActionResult<IEnumerable<CarrinhoCompra>>> ObterTodosCarrinhos()
         {
-            var favoritos = await _favoritoService.ObterTodosFavoritos();
-            return Ok(favoritos);
+            var carrinhos = await _carrinhoCompraRepository.ObterTodosCarrinhos();
+            return Ok(carrinhos);
         }
 
-        [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Obtém um favorito por ID")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Retorna o favorito encontrado", typeof(Favorito))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Favorito não encontrado")]
-        public async Task<ActionResult<Favorito>> GetById(int id)
+        [HttpGet("{id:int}")]
+        [SwaggerOperation(Summary = "Obtém um carrinho de compra por ID")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Retorna o carrinho de compra encontrado", typeof(CarrinhoCompra))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Carrinho não encontrado")]
+        public async Task<ActionResult<CarrinhoCompra>> ObterCarrinhoPorId(int id)
         {
-            var favorito = await _favoritoService.ObterFavoritoPorId(id);
-            if (favorito == null)
+            try
             {
-                return NotFound();
+                var carrinho = await _carrinhoCompraRepository.ObterCarrinhoPorId(id);
+                return Ok(carrinho);
             }
-            return Ok(favorito);
+            catch (ArgumentException)
+            {
+                return NotFound("Carrinho não encontrado.");
+            }
         }
 
         [HttpPost]
-        [SwaggerOperation(Summary = "Adiciona um novo favorito")]
-        [SwaggerResponse(StatusCodes.Status201Created, "Favorito adicionado com sucesso", typeof(Favorito))]
+        [SwaggerOperation(Summary = "Cria um novo carrinho de compra")]
+        [SwaggerResponse(StatusCodes.Status201Created, "Carrinho criado com sucesso", typeof(CarrinhoCompra))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
-        public async Task<ActionResult<Favorito>> Post(Favorito favorito)
+        public async Task<ActionResult<CarrinhoCompra>> CriarNovoCarrinho([FromBody] CarrinhoCompra carrinho)
         {
-            try
+            if (carrinho == null)
             {
-                var createdFavoritoId = await _favoritoService.AdicionarFavorito(favorito);
-                var createdFavorito = await _favoritoService.ObterFavoritoPorId(createdFavoritoId);
-                return CreatedAtAction(nameof(GetById), new { id = createdFavoritoId }, createdFavorito);
+                return BadRequest("Carrinho não pode ser nulo.");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            var id = await _carrinhoCompraRepository.CriarNovoCarrinho(carrinho);
+            var createdCarrinho = await _carrinhoCompraRepository.ObterCarrinhoPorId(id);
+            return CreatedAtAction(nameof(ObterCarrinhoPorId), new { id = id }, createdCarrinho);
         }
 
-        [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Atualiza um favorito existente")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Favorito atualizado com sucesso")]
+        [HttpPut("{id:int}")]
+        [SwaggerOperation(Summary = "Atualiza um carrinho de compra existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Carrinho atualizado com sucesso")]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Favorito não encontrado")]
-        public async Task<IActionResult> Put(int id, Favorito favorito)
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Carrinho não encontrado")]
+        public async Task<IActionResult> AtualizarCarrinho(int id, [FromBody] CarrinhoCompra carrinho)
         {
-            if (id != favorito.IDFavorito)
+            if (id != carrinho.IDCarrinho)
             {
-                return BadRequest("ID do favorito não corresponde ao ID na URL.");
+                return BadRequest("ID do carrinho não corresponde ao ID na URL.");
             }
 
             try
             {
-                await _favoritoService.AtualizarFavorito(favorito);
+                await _carrinhoCompraRepository.AtualizarCarrinho(carrinho);
                 return NoContent();
             }
             catch (Exception ex)
@@ -86,16 +83,15 @@ namespace sigmaBack.Application.Controllers
             }
         }
 
-        [HttpPatch("{id}/disable")]
-        [SwaggerOperation(Summary = "Desabilita um favorito existente")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Favorito desabilitado com sucesso")]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Favorito não encontrado")]
-        public async Task<IActionResult> Disable(int id)
+        [HttpPatch("{id:int}/habilitar")]
+        [SwaggerOperation(Summary = "Habilita um carrinho de compra existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Carrinho habilitado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Carrinho não encontrado")]
+        public async Task<IActionResult> HabilitarCarrinho(int id)
         {
             try
             {
-                await _favoritoService.DesabilitarFavorito(id);
+                await _carrinhoCompraRepository.HabilitarCarrinho(id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -104,16 +100,15 @@ namespace sigmaBack.Application.Controllers
             }
         }
 
-        [HttpPatch("{id}/enable")]
-        [SwaggerOperation(Summary = "Habilita um favorito existente")]
-        [SwaggerResponse(StatusCodes.Status204NoContent, "Favorito habilitado com sucesso")]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Requisição inválida")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "Favorito não encontrado")]
-        public async Task<IActionResult> Enable(int id)
+        [HttpPatch("{id:int}/desabilitar")]
+        [SwaggerOperation(Summary = "Desabilita um carrinho de compra existente")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "Carrinho desabilitado com sucesso")]
+        [SwaggerResponse(StatusCodes.Status404NotFound, "Carrinho não encontrado")]
+        public async Task<IActionResult> DesabilitarCarrinho(int id)
         {
             try
             {
-                await _favoritoService.HabilitarFavorito(id);
+                await _carrinhoCompraRepository.DesabilitarCarrinho(id);
                 return NoContent();
             }
             catch (Exception ex)

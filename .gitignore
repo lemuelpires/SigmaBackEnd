@@ -264,6 +264,8 @@ ServiceFabricBackup/
 *.mdf
 *.ldf
 *.ndf
+*.bak
+*.trn
 
 # Business Intelligence projects
 *.rdl.data
@@ -360,3 +362,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Sensitive files
+appsettings.json
+appsettings.Development.json
