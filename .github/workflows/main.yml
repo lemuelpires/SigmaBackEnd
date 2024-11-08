@@ -1,0 +1,87 @@
+name: CI/CD for .NET Core API
+
+on:
+  push:
+    branches:
+      - main  # ou a branch que você está usando
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Configurar o .NET SDK
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0'  # A versão do .NET que você está usando
+
+      # Restaurar as dependências
+      - name: Restore dependencies
+        run: dotnet restore ./sigmaBack.sln
+
+      # Compilar a aplicação
+      - name: Build the application
+        run: dotnet build ./sigmaBack.sln --configuration Release
+
+      # Rodar os testes
+      - name: Run tests
+        run: dotnet test ./sigmaBack.sln --configuration Release
+
+      # Publicar a aplicação (preparar para produção)
+      - name: Publish the application
+        run: dotnet publish ./sigmaBack.sln --configuration Release --output ./publish
+
+      # Criar a imagem Docker
+      - name: Build Docker image
+        run: |
+          docker build -t docker_sigmaBack ./publish  # Certifique-se de que o Dockerfile usa /publish como diretório de build
+
+      # Testar a imagem Docker (opcional)
+      - name: Run Docker container
+        run: |
+          docker run -d -p 5001:80 --name sigmaBack-container docker_sigmaBack:latest
+          sleep 10  # Aguarda o container iniciar
+          docker ps  # Verifica se o container está rodando
+
+      # Excluir o container após a verificação
+      - name: Clean up Docker container
+        run: docker rm -f sigmaBack-container
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # Garante que o job de build seja concluído antes do deploy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Fazer o deploy para o servidor
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Chave privada armazenada como secret no GitHub
+          SERVER_USER: ${{ secrets.SERVER_USER }} # Nome do usuário no seu servidor
+          SERVER_IP: ${{ secrets.SERVER_IP }} # IP do seu servidor
+        run: |
+          # Salva a chave privada em um arquivo temporário
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
+          chmod 600 private_key
+
+          # Copiar a imagem Docker para o servidor
+          docker save docker_sigmaBack:latest | bzip2 | ssh -i private_key $SERVER_USER@$SERVER_IP 'bunzip2 | docker load'
+
+          # Remover o container antigo, caso exista
+          ssh -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
+
+          # Rodar o novo container no servidor na porta 5001
+          ssh -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:80 --name sigmaBack-container docker_sigmaBack:latest"
+
+          # Mover a imagem para o diretório desejado no servidor
+          ssh -i private_key $SERVER_USER@$SERVER_IP "mkdir -p /mnt/volumes/apis/Docker_sigmaAPI"
+          ssh -i private_key $SERVER_USER@$SERVER_IP "docker save docker_sigmaBack:latest | bzip2 > /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2"
+
+          # Remove o arquivo temporário da chave privada
+          rm -f private_key
