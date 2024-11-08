@@ -38,12 +38,11 @@ jobs:
       # Criar a imagem Docker usando o Dockerfile existente
       - name: Build Docker image
         run: |
-          docker build -t dockersigmasback -f ./Dockerfile ./  # Caminho correto para o Dockerfile
+          docker build -t dockersigmasback:latest -f ./Dockerfile ./  # Caminho correto para o Dockerfile
 
       # Verificar se a imagem Docker foi criada corretamente
       - name: Verify Docker image
-        run: |
-          docker images dockersigmasback:latest
+        run: docker images dockersigmasback:latest
 
   deploy:
     runs-on: ubuntu-latest
