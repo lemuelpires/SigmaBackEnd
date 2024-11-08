@@ -38,7 +38,7 @@ jobs:
       # Criar a imagem Docker usando o Dockerfile existente
       - name: Build Docker image
         run: |
-          docker build -t dockersigmasback -f ./sigmaBack.API/Dockerfile ./  # Caminho correto para o Dockerfile
+          docker build -t dockersigmasback -f ./Dockerfile ./  # Caminho correto para o Dockerfile
 
       # Testar a imagem Docker (opcional)
       - name: Run Docker container
