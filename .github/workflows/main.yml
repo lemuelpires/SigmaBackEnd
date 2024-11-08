@@ -3,7 +3,7 @@ name: CI/CD for .NET Core API
 on:
   push:
     branches:
-      - main  # ou a branch que você está usando
+      - desenvolvimentoBackEnd  # ou a branch que você está usando
 
 jobs:
   build:
