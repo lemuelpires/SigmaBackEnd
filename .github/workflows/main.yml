@@ -35,15 +35,15 @@ jobs:
       - name: Publish the application
         run: dotnet publish ./sigmaBack.sln --configuration Release --output ./publish
 
-      # Criar a imagem Docker
+      # Criar a imagem Docker usando o Dockerfile existente
       - name: Build Docker image
         run: |
-          docker build -t docker_sigmaBack ./publish  # Certifique-se de que o Dockerfile usa /publish como diretório de build
+          docker build -t docker_sigmaBack ./  # Certifique-se de que o Dockerfile está no diretório correto
 
       # Testar a imagem Docker (opcional)
       - name: Run Docker container
         run: |
-          docker run -d -p 5001:80 --name sigmaBack-container docker_sigmaBack:latest
+          docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container docker_sigmaBack:latest
           sleep 10  # Aguarda o container iniciar
           docker ps  # Verifica se o container está rodando
 
@@ -71,17 +71,14 @@ jobs:
           chmod 600 private_key
 
           # Copiar a imagem Docker para o servidor
-          docker save docker_sigmaBack:latest | bzip2 | ssh -i private_key $SERVER_USER@$SERVER_IP 'bunzip2 | docker load'
+          docker save docker_sigmaBack:latest | bzip2 | ssh -i private_key $SERVER_USER@$SERVER_IP 'bunzip2 > /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2'
 
-          # Remover o container antigo, caso exista
+          # Parar e remover o container antigo, se existir
           ssh -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
 
-          # Rodar o novo container no servidor na porta 5001
-          ssh -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:80 --name sigmaBack-container docker_sigmaBack:latest"
-
-          # Mover a imagem para o diretório desejado no servidor
-          ssh -i private_key $SERVER_USER@$SERVER_IP "mkdir -p /mnt/volumes/apis/Docker_sigmaAPI"
-          ssh -i private_key $SERVER_USER@$SERVER_IP "docker save docker_sigmaBack:latest | bzip2 > /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2"
+          # Carregar a nova imagem e rodar o container no servidor
+          ssh -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2"
+          ssh -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container docker_sigmaBack:latest"
 
           # Remove o arquivo temporário da chave privada
           rm -f private_key
