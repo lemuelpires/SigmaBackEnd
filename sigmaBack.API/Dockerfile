@@ -1,17 +1,17 @@
 # Imagem base do ASP.NET para execução do container final
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 5001       # Porta padrão do HTTP no Docker
-EXPOSE 5002     # Porta padrão do HTTPS no Docker
+EXPOSE 5002       # Porta padrão do HTTPS no Docker
 
 # Imagem SDK do .NET para construção e publicação da aplicação
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["sigmaBack.API/sigmaBack.API.csproj", "sigmaBack.API/"]
 RUN dotnet restore "sigmaBack.API/sigmaBack.API.csproj"
 
 # Copia o restante do código para o contexto de build
-COPY . .
+COPY . . 
 WORKDIR "/src/sigmaBack.API"
 RUN dotnet build "sigmaBack.API.csproj" -c Release -o /app/build
 
@@ -26,6 +26,3 @@ COPY --from=publish /app/publish .
 
 # Comando de inicialização do container
 ENTRYPOINT ["dotnet", "sigmaBack.API.dll"]
-
-
-
