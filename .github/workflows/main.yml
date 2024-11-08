@@ -59,6 +59,11 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}  # Nome do usuário no seu servidor
           SERVER_IP: ${{ secrets.SERVER_IP }}  # IP do seu servidor
         run: |
+          # Debug: Verificar se as variáveis de ambiente estão definidas
+          echo "SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY}"
+          echo "SERVER_USER: ${SERVER_USER}"
+          echo "SERVER_IP: ${SERVER_IP}"
+      
           # Salva a chave privada em um arquivo temporário
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
