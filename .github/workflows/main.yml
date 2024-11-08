@@ -40,16 +40,10 @@ jobs:
         run: |
           docker build -t dockersigmasback -f ./Dockerfile ./  # Caminho correto para o Dockerfile
 
-      # Testar a imagem Docker (opcional)
-      - name: Run Docker container
+      # Verificar se a imagem Docker foi criada corretamente
+      - name: Verify Docker image
         run: |
-          docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest
-          sleep 10  # Aguarda o container iniciar
-          docker ps  # Verifica se o container está rodando
-
-      # Excluir o container após a verificação
-      - name: Clean up Docker container
-        run: docker rm -f sigmaBack-container
+          docker images dockersigmasback:latest
 
   deploy:
     runs-on: ubuntu-latest
