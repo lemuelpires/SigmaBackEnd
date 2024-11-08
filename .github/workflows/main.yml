@@ -3,7 +3,7 @@ name: CI/CD for .NET Core API
 on:
   push:
     branches:
-      - desenvolvimentoBackEnd  # ou a branch que você está usando
+      - desenvolvimentoBackEnd  # Ou a branch que você está usando
 
 jobs:
   build:
@@ -38,12 +38,12 @@ jobs:
       # Criar a imagem Docker usando o Dockerfile existente
       - name: Build Docker image
         run: |
-          docker build -t docker_sigmaBack ./  # Certifique-se de que o Dockerfile está no diretório correto
+          docker build -t dockersigmasback -f ./sigmaBack.API/Dockerfile ./  # Caminho correto para o Dockerfile
 
       # Testar a imagem Docker (opcional)
       - name: Run Docker container
         run: |
-          docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container docker_sigmaBack:latest
+          docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest
           sleep 10  # Aguarda o container iniciar
           docker ps  # Verifica se o container está rodando
 
@@ -62,23 +62,23 @@ jobs:
       # Fazer o deploy para o servidor
       - name: Deploy to Server
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Chave privada armazenada como secret no GitHub
-          SERVER_USER: ${{ secrets.SERVER_USER }} # Nome do usuário no seu servidor
-          SERVER_IP: ${{ secrets.SERVER_IP }} # IP do seu servidor
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Chave privada armazenada como secret no GitHub
+          SERVER_USER: ${{ secrets.SERVER_USER }}  # Nome do usuário no seu servidor
+          SERVER_IP: ${{ secrets.SERVER_IP }}  # IP do seu servidor
         run: |
           # Salva a chave privada em um arquivo temporário
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
 
           # Copiar a imagem Docker para o servidor
-          docker save docker_sigmaBack:latest | bzip2 | ssh -i private_key $SERVER_USER@$SERVER_IP 'bunzip2 > /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2'
+          docker save dockersigmasback:latest | bzip2 | ssh -i private_key $SERVER_USER@$SERVER_IP 'bunzip2 > /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2'
 
           # Parar e remover o container antigo, se existir
           ssh -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
 
           # Carregar a nova imagem e rodar o container no servidor
           ssh -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/Docker_sigmaAPI/docker_sigmaBack.tar.bz2"
-          ssh -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container docker_sigmaBack:latest"
+          ssh -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
 
           # Remove o arquivo temporário da chave privada
           rm -f private_key
