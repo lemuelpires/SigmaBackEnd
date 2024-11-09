@@ -62,18 +62,25 @@ jobs:
           # Salva a chave privada em um arquivo temporário
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
-      
+
+          # Debug: Verificar se as variáveis de ambiente estão corretas
+          echo "SERVER_USER: $SERVER_USER"
+          echo "SERVER_IP: $SERVER_IP"
+          
+          # Salvar a imagem Docker localmente
+          docker save dockersigmasback:latest -o dockersigmasback.tar
+
           # Copiar a imagem Docker para o servidor
-          docker save dockersigmasback:latest | ssh -vvv -i private_key $SERVER_USER@$SERVER_IP "cat > /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
-      
+          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar
+
           # Parar e remover o container antigo, se existir
-          ssh -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
-      
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
+
           # Carregar a nova imagem no servidor
-          ssh -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
-      
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
+
           # Rodar o novo container no servidor
-          ssh -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
-      
-          # Remove o arquivo temporário da chave privada
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
+
+          # Remover o arquivo temporário da chave privada
           rm -f private_key
