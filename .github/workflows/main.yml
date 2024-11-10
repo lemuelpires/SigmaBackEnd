@@ -39,7 +39,6 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t dockersigmasback:latest -f ./Dockerfile ./  # Caminho correto para o Dockerfile
-
       # Verificar se a imagem Docker foi criada corretamente
       - name: Verify Docker image
         run: docker images dockersigmasback:latest
@@ -69,18 +68,21 @@ jobs:
           
           # Salvar a imagem Docker localmente
           docker save dockersigmasback:latest -o dockersigmasback.tar
-
+          
           # Copiar a imagem Docker para o servidor
-          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api
+          scp -o StrictHostKeyChecking=no -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api
+
+          # Remover a imagem local após o envio para liberar espaço
+          rm dockersigmasback.tar
 
           # Parar e remover o container antigo, se existir
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
-
+          
           # Carregar a nova imagem no servidor
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
-
+          
           # Rodar o novo container no servidor
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
-
+          
           # Remover o arquivo temporário da chave privada
           rm -f private_key
