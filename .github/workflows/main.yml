@@ -49,8 +49,11 @@ jobs:
     needs: build  # Garante que o job de build seja concluído antes do deploy
 
     steps:
-      # Configurar o acesso SSH e copiar a imagem Docker para o servidor
-      - name: Deploy Docker image to Server
+      - name: Checkout code
+        uses: actions/checkout@v3  # Atualizado para v3
+
+      # Fazer o deploy para o servidor
+      - name: Deploy to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Chave privada armazenada como secret no GitHub
           SERVER_USER: ${{ secrets.SERVER_USER }}  # Nome do usuário no seu servidor
@@ -66,12 +69,18 @@ jobs:
           
           # Salvar a imagem Docker localmente
           docker save dockersigmasback:latest -o dockersigmasback.tar
-          
-          # Copiar a imagem Docker para o servidor
-          scp -o StrictHostKeyChecking=no -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api
 
-          # Remover a imagem local após o envio para liberar espaço
-          rm dockersigmasback.tar
-          
+          # Copiar a imagem Docker para o servidor
+          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar
+
+          # Parar e remover o container antigo, se existir
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
+
+          # Carregar a nova imagem no servidor
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
+
+          # Rodar o novo container no servidor
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
+
           # Remover o arquivo temporário da chave privada
           rm -f private_key
