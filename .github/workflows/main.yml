@@ -70,7 +70,7 @@ jobs:
           docker save dockersigmasback:latest -o dockersigmasback.tar
           
           # Copiar a imagem Docker para o servidor
-          scp -o StrictHostKeyChecking=no -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api
+          scp -o StrictHostKeyChecking=no -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar
 
           # Remover a imagem local após o envio para liberar espaço
           rm dockersigmasback.tar
