@@ -14,7 +14,6 @@ COPY ["sigmaBack.Application/sigmaBack.Application.csproj", "sigmaBack.Applicati
 COPY ["sigmaBack.Domain/sigmaBack.Domain.csproj", "sigmaBack.Domain/"]
 COPY ["sigmaBack.Domain.Test/sigmaBack.Domain.Test.csproj", "sigmaBack.Domain.Test/"]
 COPY ["sigmaback.Infra.Data/sigmaback.Infra.Data.csproj", "sigmaback.Infra.Data/"]
-COPY ["sigmaBack.Infra.IoC/sigmaBack.Infra.IoC.csproj", "sigmaBack.Infra.IoC/"]
 
 # Restaura as dependências do projeto
 RUN dotnet restore
