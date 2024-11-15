@@ -31,23 +31,23 @@ jobs:
         run: |
           docker build -t sigma-backend:latest -f Dockerfile .
 
-      # Faz login no servidor para enviar a imagem Docker
+      # Faz login no servidor para enviar e implantar a imagem Docker
       - name: Deploy Docker Image to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_USER: ${{ secrets.SERVER_USER }} # Ex: 'lemuel'
-          SERVER_IP: ${{ secrets.SERVER_IP }}     # Ex: '192.168.1.120'
+          SERVER_USER: ${{ secrets.SERVER_USER }} # Exemplo: 'lemuel'
+          SERVER_IP: ${{ secrets.SERVER_IP }}     # Exemplo: '192.168.1.120'
         run: |
           # Salva a chave privada em um arquivo temporário
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
           
-          # Envia a imagem Docker para o servidor via SCP
-          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
-
-          # Conecta ao servidor e realiza o deploy da aplicação
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
-            # Define variáveis para organização
+          # Envia o Dockerfile para o servidor via SCP
+          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
+          
+          # Conecta ao servidor e realiza o deploy
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << 'EOF'
+            # Define variáveis
             CONTAINER_NAME="sigma-backend"
             IMAGE_NAME="sigma-backend:latest"
             DOCKERFILE_PATH="/home/$SERVER_USER/Dockerfile"
@@ -59,8 +59,10 @@ jobs:
             # Remove imagens antigas
             docker rmi $IMAGE_NAME || true
             
-            # Constrói e roda a nova imagem
+            # Constrói a nova imagem
             docker build -t $IMAGE_NAME -f $DOCKERFILE_PATH .
+            
+            # Roda o novo container
             docker run -d --name $CONTAINER_NAME -p 5001:5001 $IMAGE_NAME
           EOF
           
