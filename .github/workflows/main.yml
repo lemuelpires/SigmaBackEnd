@@ -37,7 +37,7 @@ jobs:
           dotnet publish ./sigmaBack.Infra.IoC/sigmaBack.Infra.IoC.csproj --configuration Release --output ./publish/Infra.IoC
 
       - name: Build Docker image
-        run: docker build -t dockersigmasback:latest -f ./Dockerfile ./
+        run: docker build -t dockersigmasback:latest -f ./sigmaBack.API/Dockerfile ./
 
       - name: Verify Docker image
         run: docker images dockersigmasback:latest
