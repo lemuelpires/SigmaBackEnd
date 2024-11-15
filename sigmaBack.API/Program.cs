@@ -7,16 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 using sigmaBack.Application.Services;
 using SigmaBack.Application.Services;
 using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
-using sigmaBack.Infra.Data.Repositories;
+using SigmaBack.Infra.Data.Repositories;
 using SigmaBack.Infra.Data.Repositories;
 using SigmaBack.Infrastructure.Repositories;
 using System;
 using System.Text;
+using sigmaBack.Infra.Data.Repositories;
 
 namespace sigmaBack.API
 {
@@ -25,6 +25,13 @@ namespace sigmaBack.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Configura o servidor para ouvir na porta 5001
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(5001);  // Escuta na porta 5001
+            });
+
             ConfigureServices(builder.Services);
 
             var app = builder.Build();
@@ -159,19 +166,19 @@ namespace sigmaBack.API
                     Scheme = "Bearer"
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference
                     {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        Array.Empty<string>()
                     }
-                },
-                Array.Empty<string>()
-            }
-        });
+                });
             });
         }
 
