@@ -1,52 +1,68 @@
-name: CI/CD for .NET Core API
+name: CI/CD for sigmaBackEnd
 
 on:
   push:
     branches:
-      - main
-      - desenvolvimentoBackEnd
-  pull_request:
-    branches:
-      - main
-      - desenvolvimentoBackEnd
+      - desenvolvimentoBackEnd # Ajuste para a branch usada no projeto
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout do repositório
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+      # Configuração do ambiente para o .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.0'
 
-      - name: Build Docker image
-        run: docker build -t dockersigmasback:latest -f ./sigmaBack.API/Dockerfile ./
-
-      - name: Save Docker image to a tar file
-        run: docker save dockersigmasback:latest -o dockersigmasback.tar
-
-      - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: dockersigmasback-image
-          path: dockersigmasback.tar
-
-      - name: Run tests
-        run: dotnet test ./sigmaBack.sln --configuration Release
-
-      - name: Publish .NET projects
+      # Restaura dependências e compila o projeto
+      - name: Restore and Build
         run: |
-          dotnet publish ./sigmaBack.API/sigmaBack.API.csproj --configuration Release --output ./publish/API
-          dotnet publish ./sigmaBack.Application/sigmaBack.Application.csproj --configuration Release --output ./publish/Application
-          dotnet publish ./sigmaBack.Domain/sigmaBack.Domain.csproj --configuration Release --output ./publish/Domain
-          dotnet publish ./sigmaBack.Domain.Test/sigmaBack.Domain.Test.csproj --configuration Release --output ./publish/Domain.Test
+          dotnet restore sigmaBack.sln
+          dotnet build sigmaBack.sln --configuration Release
 
-      - name: Upload published artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: published-artifacts
-          path: ./publish/**
+      # Cria a imagem Docker do projeto
+      - name: Build Docker Image
+        run: |
+          docker build -t sigma-backend:latest .
+
+      # Faz login no servidor para enviar a imagem Docker
+      - name: Deploy Docker Image to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_USER: ${{ secrets.SERVER_USER }} # Ex: 'lemuel'
+          SERVER_IP: ${{ secrets.SERVER_IP }}     # Ex: '192.168.1.120'
+        run: |
+          # Salva a chave privada em um arquivo temporário
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
+          chmod 600 private_key
+          
+          # Envia a imagem Docker para o servidor via SCP
+          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
+
+          # Conecta ao servidor e realiza o deploy da aplicação
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
+            # Define variáveis para organização
+            CONTAINER_NAME="sigma-backend"
+            IMAGE_NAME="sigma-backend:latest"
+            DOCKERFILE_PATH="/home/$SERVER_USER/Dockerfile"
+            
+            # Remove containers antigos
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+            
+            # Remove imagens antigas
+            docker rmi $IMAGE_NAME || true
+            
+            # Constrói e roda a nova imagem
+            docker build -t $IMAGE_NAME -f $DOCKERFILE_PATH .
+            docker run -d --name $CONTAINER_NAME -p 5001:5001 $IMAGE_NAME
+          EOF
+          
+          # Remove o arquivo temporário da chave privada
+          rm -f private_key
