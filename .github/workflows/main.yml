@@ -31,6 +31,13 @@ jobs:
         run: |
           docker build -t sigma-backend:latest -f Dockerfile .
 
+      # Faz login no Docker (se necessário)
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # Defina o username no Secrets do GitHub
+          password: ${{ secrets.DOCKER_PASSWORD }}  # Defina a senha no Secrets do GitHub
+
       # Faz login no servidor para enviar e implantar a imagem Docker
       - name: Deploy Docker Image to Server
         env:
@@ -42,7 +49,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
           
-          # Envia o Dockerfile para o servidor via SCP
+          # Envia o Dockerfile e a imagem para o servidor via SCP
           scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
           
           # Conecta ao servidor e realiza o deploy
@@ -62,7 +69,7 @@ jobs:
             docker stop $CONTAINER_NAME || true
             docker rm $CONTAINER_NAME || true
             
-            # Remove imagens antigas
+            # Remove imagens antigas, se existirem
             docker rmi $IMAGE_NAME || true
             
             # Constrói a nova imagem
