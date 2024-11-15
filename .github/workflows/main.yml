@@ -53,17 +53,15 @@ jobs:
       - name: Deploy to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
         run: |
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
-          echo "SERVER_USER: $SERVER_USER"
-          echo "SERVER_IP: $SERVER_IP"
+          echo "SERVER_USER: lemuel"
+          echo "SERVER_IP: www.portalmantec.com.br"
           
           docker save dockersigmasback:latest -o dockersigmasback.tar
-          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key dockersigmasback.tar $SERVER_USER@$SERVER_IP:/mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker rm -f sigmaBack-container || true"
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker load < /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
+          scp -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i private_key dockersigmasback.tar lemuel@www.portalmantec.com.br:/mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar
+          ssh -o StrictHostKeyChecking=no -i private_key lemuel@www.portalmantec.com.br "docker rm -f sigmaBack-container || true"
+          ssh -o StrictHostKeyChecking=no -i private_key lemuel@www.portalmantec.com.br "docker load < /mnt/volumes/apis/docker_sigma_api/docker_sigmaBack.tar"
+          ssh -o StrictHostKeyChecking-no -i private_key lemuel@www.portalmantec.com.br "docker run -d -p 5001:5001 -p 5002:5002 --name sigmaBack-container dockersigmasback:latest"
           rm -f private_key
