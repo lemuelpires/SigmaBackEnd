@@ -52,7 +52,7 @@ jobs:
             IMAGE_NAME="sigma-backend:latest"
             DOCKERFILE_PATH="/home/$SERVER_USER/Dockerfile"
             
-            # Remove containers antigos
+            # Remove containers antigos, se existirem
             docker stop $CONTAINER_NAME || true
             docker rm $CONTAINER_NAME || true
             
