@@ -60,7 +60,7 @@ jobs:
           DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
           
           # Envia o Dockerfile para o servidor via SCP
-          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
+          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DOCKERFILE_PATH
           
           # Conecta ao servidor e realiza o deploy
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << 'EOF'
