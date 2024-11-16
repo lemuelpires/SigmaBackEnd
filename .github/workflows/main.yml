@@ -53,16 +53,19 @@ jobs:
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
           chmod 600 private_key
           
-          # Envia o Dockerfile e a imagem para o servidor via SCP
-          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
+          # Define variáveis
+          CONTAINER_NAME="sigma-backend"
+          IMAGE_NAME="sigma-backend:latest"
+          DEPLOY_PATH="/mnt/volumes/apis/sigma_back" # Caminho de deploy ajustado
+          DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
+          
+          # Envia o Dockerfile para o servidor via SCP
+          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
           
           # Conecta ao servidor e realiza o deploy
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << 'EOF'
-            # Define variáveis
-            CONTAINER_NAME="sigma-backend"
-            IMAGE_NAME="sigma-backend:latest"
-            DOCKERFILE_PATH="/home/$SERVER_USER/Dockerfile"
-            DEPLOY_PATH="/mnt/volumes/apis/sigma_back" # Caminho de deploy ajustado
+            # Lista arquivos no servidor para verificar a transferência do Dockerfile
+            ls -la $DEPLOY_PATH
             
             # Garantir que o diretório de deploy tenha permissões apropriadas
             sudo mkdir -p $DEPLOY_PATH
@@ -77,7 +80,7 @@ jobs:
             docker rmi $IMAGE_NAME || true
             
             # Constrói a nova imagem
-            docker build -t $IMAGE_NAME -f $DOCKERFILE_PATH .
+            docker build -t $IMAGE_NAME -f $DOCKERFILE_PATH $DEPLOY_PATH
             
             # Roda o novo container e mapeia para o diretório desejado
             docker run -d --name $CONTAINER_NAME -p 5001:5001 -v $DEPLOY_PATH:/app $IMAGE_NAME
