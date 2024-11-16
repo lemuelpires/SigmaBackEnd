@@ -42,7 +42,7 @@ jobs:
           chmod 600 private_key
           
           # Define variáveis
-          DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
+          DEPLOY_PATH="/mnt/volumes/apis"
           
           # Envia o código e o Dockerfile para o servidor
           scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
