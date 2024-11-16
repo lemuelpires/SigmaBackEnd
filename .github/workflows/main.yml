@@ -57,14 +57,15 @@ jobs:
           scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
           
           # Conecta ao servidor e realiza o deploy
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
+            # Define variáveis no servidor
+            CONTAINER_NAME="sigma-backend"
+            IMAGE_NAME="sigma-backend:latest"
+            DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
+            DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
+            
             # Lista arquivos no servidor para verificar a transferência do Dockerfile
             ls -la $DEPLOY_PATH
-            
-            # Garantir que o diretório de deploy tenha permissões apropriadas
-            sudo mkdir -p $DEPLOY_PATH
-            sudo chown $USER:$USER $DEPLOY_PATH
-            sudo chmod u+rwx $DEPLOY_PATH
             
             # Remove containers antigos, se existirem
             docker stop $CONTAINER_NAME || true
@@ -78,7 +79,7 @@ jobs:
             
             # Roda o novo container e mapeia para o diretório desejado
             docker run -d --name $CONTAINER_NAME -p 5001:5001 -v $DEPLOY_PATH:/app $IMAGE_NAME
-          EOF
+EOF
           
           # Remove o arquivo temporário da chave privada
           rm -f private_key
