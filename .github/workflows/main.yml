@@ -52,16 +52,8 @@ jobs:
           # Verifica se o Docker está instalado no servidor
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "command -v docker || (echo 'Docker não instalado' && exit 1)"
           
-          # Faz login no Docker Hub (se necessário)
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-EOF
-
-          # Envia e carrega a imagem Docker no servidor
-          docker save sigma-backend:latest | ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP 'docker load'
-          
-          # Verifica se a imagem foi carregada corretamente
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker images | grep $IMAGE_NAME || (echo 'Imagem não encontrada no servidor!' && exit 1)"
+          # Envia a imagem Docker para o servidor (usando Docker Hub)
+          docker push sigma-backend:latest || exit 1
           
           # Realiza o deploy no servidor
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
