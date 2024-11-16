@@ -26,6 +26,10 @@ jobs:
           dotnet restore sigmaBack.sln
           dotnet build sigmaBack.sln --configuration Release
 
+      # Lista arquivos no diretório atual
+      - name: List files
+        run: ls -la
+
       # Cria a imagem Docker do projeto
       - name: Build Docker Image
         run: |
