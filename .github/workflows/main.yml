@@ -65,7 +65,7 @@ jobs:
           # Define variáveis
           CONTAINER_NAME="sigma-backend"
           IMAGE_NAME="sigma-backend:latest"
-          DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
+          DEPLOY_PATH="/mnt/volumes/apis"
           DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
           
           # Conecta ao servidor e realiza o deploy
@@ -73,7 +73,7 @@ jobs:
             # Define variáveis no servidor
             CONTAINER_NAME="sigma-backend"
             IMAGE_NAME="sigma-backend:latest"
-            DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
+            DEPLOY_PATH="/mnt/volumes/apis"
             DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
             
             # Lista arquivos no servidor para verificar a transferência
