@@ -30,13 +30,15 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t sigma-backend:latest -f Dockerfile .
-      
+
       # Envia a imagem Docker para o servidor e realiza o deploy
       - name: Deploy Docker Image to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           # Salva a chave privada em um arquivo temporário
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
@@ -49,9 +51,17 @@ jobs:
 
           # Verifica se o Docker está instalado no servidor
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "command -v docker || (echo 'Docker não instalado' && exit 1)"
+          
+          # Faz login no Docker Hub (se necessário)
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+EOF
 
           # Envia e carrega a imagem Docker no servidor
           docker save sigma-backend:latest | ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP 'docker load'
+          
+          # Verifica se a imagem foi carregada corretamente
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP "docker images | grep $IMAGE_NAME || (echo 'Imagem não encontrada no servidor!' && exit 1)"
           
           # Realiza o deploy no servidor
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
