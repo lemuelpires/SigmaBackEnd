@@ -12,7 +12,6 @@ using SigmaBack.Application.Services;
 using sigmaBack.Domain.Interfaces;
 using SigmaBack.Domain.Interfaces;
 using SigmaBack.Infra.Data.Repositories;
-using SigmaBack.Infra.Data.Repositories;
 using SigmaBack.Infrastructure.Repositories;
 using System;
 using System.Text;
