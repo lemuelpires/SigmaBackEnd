@@ -45,7 +45,7 @@ jobs:
           DEPLOY_PATH="/mnt/volumes/apis"
           
           # Envia o código e o Dockerfile para o servidor
-          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
+          scp -o StrictHostKeyChecking=no -i private_key ./SigmaBackEnd/Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
           scp -o StrictHostKeyChecking=no -i private_key -r ./* $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
 
           # Remove o arquivo temporário da chave privada
