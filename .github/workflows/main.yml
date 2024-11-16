@@ -79,7 +79,6 @@ jobs:
             
             # Roda o novo container e mapeia para o diretório desejado
             docker run -d --name $CONTAINER_NAME -p 5001:5001 -v $DEPLOY_PATH:/app $IMAGE_NAME
-EOF
           
           # Remove o arquivo temporário da chave privada
           rm -f private_key
