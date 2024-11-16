@@ -30,12 +30,28 @@ jobs:
       - name: List files
         run: ls -la
 
-      # Cria a imagem Docker do projeto
-      - name: Build Docker Image
+      # Faz login no servidor para enviar arquivos necessários para o deploy
+      - name: Transfer Files to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
         run: |
-          docker build -t sigma-backend:latest -f Dockerfile .
+          # Salva a chave privada em um arquivo temporário
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
+          chmod 600 private_key
+          
+          # Define variáveis
+          DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
+          
+          # Envia o código e o Dockerfile para o servidor
+          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
+          scp -o StrictHostKeyChecking=no -i private_key -r ./* $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
 
-      # Faz login no servidor para enviar e implantar a imagem Docker
+          # Remove o arquivo temporário da chave privada
+          rm -f private_key
+
+      # Faz login no servidor para construir e implantar a imagem Docker
       - name: Deploy Docker Image to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -52,10 +68,6 @@ jobs:
           DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
           DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
           
-          # Salva a imagem Docker e envia para o servidor
-          docker save $IMAGE_NAME | ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP 'docker load'
-          scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
-          
           # Conecta ao servidor e realiza o deploy
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP << EOF
             # Define variáveis no servidor
@@ -64,7 +76,7 @@ jobs:
             DEPLOY_PATH="/mnt/volumes/apis/sigma_back"
             DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
             
-            # Lista arquivos no servidor para verificar a transferência do Dockerfile
+            # Lista arquivos no servidor para verificar a transferência
             ls -la $DEPLOY_PATH
             
             # Remove containers antigos, se existirem
@@ -77,9 +89,8 @@ jobs:
             # Constrói a nova imagem
             docker build -t $IMAGE_NAME -f $DOCKERFILE_PATH $DEPLOY_PATH
             
-            # Roda o novo container
+            # Roda o novo container e mapeia para o diretório desejado
             docker run -d --name $CONTAINER_NAME -p 5001:5001 -v $DEPLOY_PATH:/app $IMAGE_NAME
-          EOF
           
           # Remove o arquivo temporário da chave privada
           rm -f private_key
