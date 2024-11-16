@@ -53,7 +53,7 @@ jobs:
           DOCKERFILE_PATH="$DEPLOY_PATH/Dockerfile"
           
           # Salva a imagem Docker e envia para o servidor
-          docker save sigma-backend:latest | ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP 'docker load'
+          docker save $IMAGE_NAME | ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP 'docker load'
           scp -o StrictHostKeyChecking=no -i private_key ./Dockerfile $SERVER_USER@$SERVER_IP:$DEPLOY_PATH/
           
           # Conecta ao servidor e realiza o deploy
@@ -77,8 +77,9 @@ jobs:
             # Constrói a nova imagem
             docker build -t $IMAGE_NAME -f $DOCKERFILE_PATH $DEPLOY_PATH
             
-            # Roda o novo container e mapeia para o diretório desejado
+            # Roda o novo container
             docker run -d --name $CONTAINER_NAME -p 5001:5001 -v $DEPLOY_PATH:/app $IMAGE_NAME
+          EOF
           
           # Remove o arquivo temporário da chave privada
           rm -f private_key
